@@ -153,7 +153,7 @@
               <td><button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i> View</button></td>
             </tr>
             <tr>
-              <td>#ORD-005</td>
+              <td>#ORD-00577</td>
               <td>David Wilson</td>
               <td>11 Mar 2025</td>
               <td>$185.25</td>
