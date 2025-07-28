@@ -22,7 +22,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
      <link rel="icon" type="image/x-icon" href="images/favicon.png"> 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/user-management.css" />
+  <link rel="stylesheet" href="css/sidebar-header.css" />
   <link rel="stylesheet" href="alert/dist/sweetalert.css" />
 </head>
 <body>

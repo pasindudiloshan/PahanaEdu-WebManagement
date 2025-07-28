@@ -11,7 +11,9 @@ import com.pahanaedu.util.DBUtil;
 
 public class UserDao {
 
-    // Validate user login
+    /**
+     * Validate user credentials during login
+     */
     public static User validateUser(String email, String password) {
         User user = null;
         String sql = "SELECT * FROM users WHERE uemail = ? AND upwd = ?";
@@ -20,7 +22,7 @@ public class UserDao {
              PreparedStatement pst = con.prepareStatement(sql)) {
 
             pst.setString(1, email);
-            pst.setString(2, password);
+            pst.setString(2, password); // NOTE: Use hashed password in production
 
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
@@ -30,16 +32,20 @@ public class UserDao {
                     user.setPassword(rs.getString("upwd"));
                     user.setMobile(rs.getString("umobile"));
                     user.setRole(rs.getString("urole"));
+                    // You can also load photo here if needed
                 }
             }
 
         } catch (Exception e) {
+            System.out.println("Error in validateUser:");
             e.printStackTrace();
         }
         return user;
     }
 
-    // Check if email already exists
+    /**
+     * Check if the email already exists (for forgot password, registration)
+     */
     public static boolean isEmailExists(String email) {
         boolean exists = false;
         String sql = "SELECT uemail FROM users WHERE uemail = ?";
@@ -53,12 +59,15 @@ public class UserDao {
             }
 
         } catch (Exception e) {
+            System.out.println("Error in isEmailExists:");
             e.printStackTrace();
         }
         return exists;
     }
 
-    // Add new user
+    /**
+     * Register a new user
+     */
     public static boolean addUser(User user) {
         boolean isSuccess = false;
         String sql = "INSERT INTO users (uname, uemail, upwd, umobile, urole, uphoto) VALUES (?, ?, ?, ?, ?, ?)";
@@ -82,14 +91,16 @@ public class UserDao {
             isSuccess = rowsInserted > 0;
 
         } catch (Exception e) {
-            System.out.println("Error in addUser DAO:");
+            System.out.println("Error in addUser:");
             e.printStackTrace();
         }
 
         return isSuccess;
     }
 
-    // Get all users
+    /**
+     * Get all users from database
+     */
     public static List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
         String sql = "SELECT * FROM users";
@@ -109,14 +120,16 @@ public class UserDao {
             }
 
         } catch (Exception e) {
-            System.out.println("Error in getAllUsers DAO:");
+            System.out.println("Error in getAllUsers:");
             e.printStackTrace();
         }
 
         return userList;
     }
 
-    // Get total user count
+    /**
+     * Count total users in DB
+     */
     public static int getUserCount() {
         int count = 0;
         String sql = "SELECT COUNT(*) AS total FROM users";
@@ -130,14 +143,16 @@ public class UserDao {
             }
 
         } catch (Exception e) {
-            System.out.println("Error in getUserCount DAO:");
+            System.out.println("Error in getUserCount:");
             e.printStackTrace();
         }
 
         return count;
     }
 
-    // Delete user by email
+    /**
+     * Delete a user using email (admin feature maybe)
+     */
     public static boolean deleteUserByEmail(String email) {
         String sql = "DELETE FROM users WHERE uemail = ?";
         try (Connection con = DBUtil.getConnection();
@@ -147,10 +162,49 @@ public class UserDao {
             return pst.executeUpdate() > 0;
 
         } catch (Exception e) {
-            System.out.println("Error in deleteUserByEmail DAO:");
+            System.out.println("Error in deleteUserByEmail:");
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Update user's password (used in reset password flow)
+     */
+    public static boolean updatePassword(String email, String newPassword) {
+        boolean rowUpdated = false;
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("UPDATE users SET upwd = ? WHERE uemail = ?")) {
+
+            stmt.setString(1, newPassword);
+            stmt.setString(2, email);
+
+            int rows = stmt.executeUpdate();
+            System.out.println("Update Password affected rows: " + rows);  // DEBUG PRINT
+            rowUpdated = rows > 0;
+
+        } catch (Exception e) {
+            System.out.println("Error in updatePassword:");
+            e.printStackTrace();
+        }
+
+        return rowUpdated;
+    }
+
+    // Check if email is registered
+    public static boolean isEmailRegistered(String email) {
+        boolean exists = false;
+        try (Connection conn = DBUtil.getConnection()) {
+            String sql = "SELECT * FROM users WHERE uemail = ?";  // FIXED COLUMN NAME
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            exists = rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return exists;
     }
 }
 

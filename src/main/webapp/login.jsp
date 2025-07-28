@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css" />
   <link rel="icon" type="image/x-icon" href="images/favicon.png"> 
   <!-- Main CSS -->
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/login.css" />
 
   <!-- SweetAlert CSS -->
   <link rel="stylesheet" href="alert/dist/sweetalert.css" />
@@ -29,7 +29,6 @@
           <figure>
             <img src="images/signin-image.jpg" alt="Sign in image" />
           </figure>
-          <a href="registration.jsp" class="signup-image-link">Create an account</a>
         </div>
 
         <div class="signin-form">
@@ -62,10 +61,7 @@
               />
             </div>
             <div class="form-group">
-              <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
-              <label for="remember-me" class="label-agree-term">
-                <span><span></span></span>Remember me
-              </label>
+                <a href="forgotPassword.jsp" >Forgot Password</a>
             </div>
             <div class="form-group form-button">
               <input type="submit" name="signin" id="signin" class="form-submit" value="Log in" />

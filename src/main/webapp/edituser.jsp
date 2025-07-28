@@ -49,7 +49,8 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" />
-  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/user-management.css" />
+  <link rel="stylesheet" href="css/sidebar-header.css" />
   <link rel="stylesheet" href="alert/dist/sweetalert.css" />
     <link rel="icon" type="image/x-icon" href="images/favicon.png"> 
 </head>

@@ -1,0 +1,242 @@
+@charset "UTF-8";
+
+/* user-management.css */
+
+/* Container & Main Content */
+.container {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  grid-template-rows: 70px 1fr;
+  height: 100vh;
+  background: #f4f6f8;
+  overflow: hidden;
+}
+
+.main-content {
+  grid-column: 2;
+  grid-row: 2;
+  padding: 30px 40px;
+  overflow-y: auto;
+}
+
+/* Page Title */
+.page-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+.page-title .title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #333;
+}
+.action-buttons a.btn {
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+}
+
+/* Buttons */
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+
+.btn-primary {
+  background-color: #3a0ca3;
+  color: white;
+}
+.btn-primary:hover {
+  background-color: #4361ee;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2px solid #3a0ca3;
+  color: #3a0ca3;
+}
+.btn-outline:hover {
+  background-color: #3a0ca3;
+  color: white;
+}
+
+.btn-sm, .btn.btn-sm {
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+/* Cards */
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(58, 12, 163, 0.15);
+  padding: 20px;
+  margin-bottom: 40px;
+}
+
+.card-title {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  color: #3a0ca3;
+  font-weight: 700;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-title i {
+  font-size: 22px;
+  color: #7209b7;
+}
+
+/* Form */
+form {
+  width: 100%;
+}
+.form-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.form-row-two {
+  display: flex;
+  gap: 24px;
+  flex-wrap: nowrap;
+  margin-bottom: 18px;
+}
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+.form-input {
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+.form-input:focus {
+  outline: none;
+  border-color: #3a0ca3;
+  box-shadow: 0 0 8px rgba(58, 12, 163, 0.25);
+}
+
+/* Table */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 15px -5px rgba(58, 12, 163, 0.2);
+}
+.data-table th,
+.data-table td {
+  padding: 12px 18px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+.data-table th {
+  background-color: #7209b7;
+  color: white;
+  font-weight: 600;
+}
+.data-table tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: default;
+}
+
+/* Status Labels */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  user-select: none;
+}
+
+.status.active {
+  background-color: #4cc9f0;
+  color: #023047;
+}
+.status.inactive {
+  background-color: #f72585;
+  color: #fff;
+}
+
+/* Images in table */
+.data-table img {
+  border-radius: 50%;
+  object-fit: cover;
+  width: 40px;
+  height: 40px;
+}
+
+/* Inline form buttons */
+.data-table form {
+  display: inline;
+  margin: 0 4px;
+}
+
+.data-table button {
+  border: 2px solid #7209b7;
+  background: transparent;
+  color: #7209b7;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.data-table button:hover {
+  background-color: #7209b7;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-row-two {
+    flex-direction: column;
+  }
+  .container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+  }
+  .main-content {
+    grid-column: 1;
+    grid-row: 3;
+    padding: 20px;
+  }
+}

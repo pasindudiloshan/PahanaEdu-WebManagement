@@ -2,17 +2,20 @@ package com.pahanaedu.model;
 
 import java.io.InputStream;
 
+/**
+ * Model class representing a User entity.
+ */
 public class User {
-    private int id;  // if you have id field, else remove this line
-    private String name;
-    private String email;
-    private String password;
-    private String mobile;
-    private String role;
-    private InputStream photo;
+    private int id;                // User ID, optional if your DB uses auto-increment
+    private String name;           // User's full name
+    private String email;          // User email (unique)
+    private String password;       // User password (hashed ideally)
+    private String mobile;         // User mobile number
+    private String role;           // User role (e.g., admin, employee)
+    private InputStream photo;     // User photo (as InputStream)
 
     public User() {
-        // default constructor
+        // Default constructor
     }
 
     public User(String name, String email, String password, String mobile, String role, InputStream photo) {
@@ -24,7 +27,6 @@ public class User {
         this.photo = photo;
     }
 
-    // If you use id, add constructor with id
     public User(int id, String name, String email, String password, String mobile, String role, InputStream photo) {
         this.id = id;
         this.name = name;
