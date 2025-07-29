@@ -27,7 +27,7 @@
 
             if (rs.next()) {
                 name = rs.getString("uname");
-                contact = rs.getString("umobile");  // <-- fixed here
+                contact = rs.getString("umobile");  // fixed here
                 role = rs.getString("urole");
             }
         } catch (Exception e) {
@@ -52,7 +52,7 @@
   <link rel="stylesheet" href="css/user-management.css" />
   <link rel="stylesheet" href="css/sidebar-header.css" />
   <link rel="stylesheet" href="alert/dist/sweetalert.css" />
-    <link rel="icon" type="image/x-icon" href="images/favicon.png"> 
+  <link rel="icon" type="image/x-icon" href="images/favicon.png" />
 </head>
 <body>
 
@@ -77,12 +77,18 @@
 
       <div style="padding: 24px;">
         <form action="UpdateUserServlet" method="post" enctype="multipart/form-data">
-          <input type="hidden" name="email" value="<%= email %>" />
+          <!-- Hidden original email to identify user -->
+          <input type="hidden" name="originalEmail" value="<%= email %>" />
 
           <div class="form-row-two">
             <div class="form-group">
               <label for="name">Full Name <span style="color:red">*</span></label>
               <input type="text" name="name" id="name" value="<%= name %>" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address <span style="color:red">*</span></label>
+              <!-- IMPORTANT: name must be 'email' to match servlet -->
+              <input type="email" name="email" id="email" value="<%= email %>" class="form-input" required />
             </div>
             <div class="form-group">
               <label for="contact">Contact Number <span style="color:red">*</span></label>
@@ -122,3 +128,4 @@
 
 </body>
 </html>
+

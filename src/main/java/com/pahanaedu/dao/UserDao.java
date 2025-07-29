@@ -1,5 +1,6 @@
 package com.pahanaedu.dao;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -206,6 +207,42 @@ public class UserDao {
         }
         return exists;
     }
+    
+    public static boolean updateUser(String originalEmail, User updatedUser, InputStream photoStream) {
+        boolean isUpdated = false;
+        String sqlWithPhoto = "UPDATE users SET uname = ?, uemail = ?, umobile = ?, urole = ?, uphoto = ? WHERE uemail = ?";
+        String sqlWithoutPhoto = "UPDATE users SET uname = ?, uemail = ?, umobile = ?, urole = ? WHERE uemail = ?";
+
+        try (Connection con = DBUtil.getConnection()) {
+            PreparedStatement pst;
+
+            if (photoStream != null) {
+                pst = con.prepareStatement(sqlWithPhoto);
+                pst.setString(1, updatedUser.getName());
+                pst.setString(2, updatedUser.getEmail());
+                pst.setString(3, updatedUser.getMobile());
+                pst.setString(4, updatedUser.getRole());
+                pst.setBlob(5, photoStream);
+                pst.setString(6, originalEmail);
+            } else {
+                pst = con.prepareStatement(sqlWithoutPhoto);
+                pst.setString(1, updatedUser.getName());
+                pst.setString(2, updatedUser.getEmail());
+                pst.setString(3, updatedUser.getMobile());
+                pst.setString(4, updatedUser.getRole());
+                pst.setString(5, originalEmail);
+            }
+
+            int rows = pst.executeUpdate();
+            isUpdated = rows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return isUpdated;
+    }
+
 }
+
 
 

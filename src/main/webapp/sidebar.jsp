@@ -15,10 +15,10 @@
       <i class="fas fa-user-friends"></i>
       <span>Customers</span>
     </div>
-    <div class="nav-item">
+    <a href="productmanagement.jsp" class="nav-item">
       <i class="fas fa-box"></i>
       <span>Products</span>
-    </div>
+    </a>
 
     <div class="menu-heading">Reports</div>
     <div class="nav-item">

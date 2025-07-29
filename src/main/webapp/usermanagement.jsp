@@ -52,60 +52,62 @@
         <h3><i class="fas fa-users"></i> Existing Users</h3>
       </div>
 
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Photo</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Status</th>
-            <% if (isAdmin) { %>
-              <th>Actions</th>
-            <% } %>
-          </tr>
-        </thead>
-        <tbody>
-          <% for (User user : users) { %>
-            <tr>
-              <td>
-                <img src="userImage?email=<%= user.getEmail() %>" 
-                     alt="User Photo" 
-                     style="width:40px; height:40px; border-radius:50%; object-fit:cover;" 
-                     onerror="this.onerror=null;this.src='images/default-user.png';" />
-              </td>
-              <td><%= user.getName() %></td>
-              <td><%= user.getEmail() %></td>
-              <td><%= user.getRole() %></td>
-              <td>
-                <span class="status active">
-                  <i class="fas fa-check-circle"></i> Active
-                </span>
-              </td>
-              <% if (isAdmin) { %>
-              <td>
-                <!-- Edit button -->
-                <form action="edituser.jsp" method="get" style="display:inline;">
-                  <input type="hidden" name="email" value="<%= user.getEmail() %>" />
-                  <button type="submit" class="btn btn-outline btn-sm">
-                    <i class="fas fa-edit"></i> Edit
-                  </button>
-                </form>
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Photo</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Role</th>
+      <th>Status</th>
+      <% if (isAdmin) { %>
+        <th>Actions</th>
+      <% } %>
+    </tr>
+  </thead>
+  <tbody>
+    <% for (User user : users) { %>
+      <tr>
+        <td>
+          <img src="userImage?email=<%= user.getEmail() %>" 
+               alt="User Photo" 
+               style="width:40px; height:40px; border-radius:50%; object-fit:cover;" 
+               onerror="this.onerror=null;this.src='images/default-user.png';" />
+        </td>
+        <td><%= user.getName() %></td>
+        <td><%= user.getEmail() %></td>
+        <td><%= user.getMobile() %></td>
+        <td><%= user.getRole() %></td>
+        <td>
+          <span class="status active">
+            <i class="fas fa-check-circle"></i> Active
+          </span>
+        </td>
+        <% if (isAdmin) { %>
+        <td>
+          <!-- Edit button -->
+          <form action="edituser.jsp" method="get" style="display:inline;">
+            <input type="hidden" name="email" value="<%= user.getEmail() %>" />
+            <button type="submit" class="btn btn-outline btn-sm">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+          </form>
 
-                <!-- Delete button -->
-                <form action="deleteUser" method="post" class="delete-form" style="display:inline;">
-                  <input type="hidden" name="email" value="<%= user.getEmail() %>" />
-                  <button type="button" class="btn btn-outline btn-sm delete-btn">
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                </form>
-              </td>
-              <% } %>
-            </tr>
-          <% } %>
-        </tbody>
-      </table>
-    </div>
+          <!-- Delete button -->
+          <form action="deleteUser" method="post" class="delete-form" style="display:inline;">
+            <input type="hidden" name="email" value="<%= user.getEmail() %>" />
+            <button type="button" class="btn btn-outline btn-sm delete-btn">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </form>
+        </td>
+        <% } %>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+ </div>
   </div>
 </div>
 
