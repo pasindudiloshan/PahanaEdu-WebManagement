@@ -1,4 +1,6 @@
+<%@ page import="com.pahanaedu.dao.CustomerDao" %> 
 <%@ page import="com.pahanaedu.dao.UserDao" %>
+<%@ page import="com.pahanaedu.dao.ProductDao" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%
@@ -7,25 +9,27 @@
         return;
     }
 
+    int totalCustomers = CustomerDao.getCustomerCount(); 
     int totalUsers = UserDao.getUserCount();
+    int totalProducts = ProductDao.getProductCount();
+    
 %>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Admin Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard</title>
 
-    <!-- Favicon -->
-    <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.png" type="image/x-icon" />
+  <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.png" type="image/x-icon" />
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 
-    <!-- Shared & Page CSS -->
-    <link rel="stylesheet" href="css/sidebar-header.css" />
-    <link rel="stylesheet" href="css/index.css" />
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/sidebar-header.css" />
+  <link rel="stylesheet" href="css/index.css" />
 </head>
 <body>
 
@@ -33,26 +37,64 @@
   <%@ include file="sidebar.jsp" %>
   <%@ include file="header.jsp" %>
 
-  <div class="main-content"><!-- WAS main-container -->
+  <div class="main-content">
     
-    <!-- Stats Cards -->
-    <section class="stats-cards">
-      <div class="stat-card">
-        <div class="card-header">
-          <div>
-            <div class="card-value"><%= totalUsers %></div>
-            <div class="card-label">Total Users</div>
-          </div>
-          <div class="card-icon purple">
-            <i class="fas fa-users"></i>
-          </div>
-        </div>
-        <div class="card-change positive">
-          <i class="fas fa-arrow-up"></i>
-          <span>12.5% from last month</span>
-        </div>
+    <div class="page-title">
+      <div class="title">Dashboard</div>
+    </div>
+
+   <section class="stats-cards">
+   
+     <div class="stat-card">
+    <div class="card-header">
+      <div>
+        <div class="card-value"><%= totalCustomers %></div>
+        <div class="card-label">Total Customers</div>
       </div>
-    </section>
+      <div class="card-icon blue">
+        <i class="fas fa-users"></i>
+      </div>
+    </div>
+    <div class="card-change positive">
+      <i class="fas fa-arrow-up"></i>
+      <span>9.8% from last month</span>
+    </div>
+  </div>
+  
+    <div class="stat-card">
+    <div class="card-header">
+      <div>
+        <div class="card-value"><%= totalProducts %></div>
+        <div class="card-label">Total Products</div>
+      </div>
+      <div class="card-icon green">
+        <i class="fas fa-book"></i>
+      </div>
+    </div>
+    <div class="card-change positive">
+      <i class="fas fa-arrow-up"></i>
+      <span>8.9% from last month</span>
+    </div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="card-header">
+      <div>
+        <div class="card-value"><%= totalUsers %></div>
+        <div class="card-label">Total Users</div>
+      </div>
+      <div class="card-icon purple">
+        <i class="fas fa-users-cog"></i> 
+      </div>
+    </div>
+    <div class="card-change positive">
+      <i class="fas fa-arrow-up"></i>
+      <span>12.5% from last month</span>
+    </div>
+  </div>
+
+</section>
+
 
     <!-- Recent Orders -->
     <section class="table-card">
@@ -95,22 +137,6 @@
             <td>Michael Brown</td>
             <td>13 Mar 2025</td>
             <td>$79.50</td>
-            <td><span class="status active"><i class="fas fa-check-circle"></i> Completed</span></td>
-            <td><button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i> View</button></td>
-          </tr>
-          <tr>
-            <td>#ORD-004</td>
-            <td>Sarah Davis</td>
-            <td>12 Mar 2025</td>
-            <td>$350.00</td>
-            <td><span class="status cancelled"><i class="fas fa-times-circle"></i> Cancelled</span></td>
-            <td><button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i> View</button></td>
-          </tr>
-          <tr>
-            <td>#ORD-00577</td>
-            <td>David Wilson</td>
-            <td>11 Mar 2025</td>
-            <td>$185.25</td>
             <td><span class="status active"><i class="fas fa-check-circle"></i> Completed</span></td>
             <td><button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i> View</button></td>
           </tr>
