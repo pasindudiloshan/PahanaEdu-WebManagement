@@ -2,7 +2,6 @@ package com.pahanaedu.controller;
 
 import java.io.IOException;
 
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.pahanaedu.dao.UserDao;
+import org.mindrot.jbcrypt.BCrypt;
 
 @WebServlet("/newPassword")
 public class NewPassword extends HttpServlet {
@@ -28,7 +28,10 @@ public class NewPassword extends HttpServlet {
         RequestDispatcher dispatcher = null;
 
         if (password != null && password.equals(confPassword)) {
-            boolean success = UserDao.updatePassword(email, password);
+            // ✅ Hash the password before saving
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
+            boolean success = UserDao.updatePassword(email, hashedPassword);
             if (success) {
                 session.removeAttribute("email");
                 session.removeAttribute("otp");
@@ -45,3 +48,4 @@ public class NewPassword extends HttpServlet {
         }
     }
 }
+

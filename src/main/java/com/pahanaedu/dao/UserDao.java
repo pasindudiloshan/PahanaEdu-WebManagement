@@ -35,10 +35,10 @@ public class UserDao {
 	                if (hashedPwd != null) {
 	                    if (hashedPwd.startsWith("$2a$") || hashedPwd.startsWith("$2b$")) {
 	                        // It's a bcrypt hash
-	                        match = BCrypt.checkpw(password, hashedPwd);
+	                        match = BCrypt.checkpw(password, hashedPwd);  // ✅ Good
 	                    } else {
 	                        // Plain text fallback (for old users)
-	                        match = password.equals(hashedPwd);
+	                        match = password.equals(hashedPwd);          // 🔁 Fallback
 	                    }
 	                }
 
@@ -213,26 +213,22 @@ public class UserDao {
     /**
      * Update user's password (used in reset password flow)
      */
-    public static boolean updatePassword(String email, String newPassword) {
+    public static boolean updatePassword(String email, String hashedPassword) {
         boolean rowUpdated = false;
-
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement("UPDATE users SET upwd = ? WHERE uemail = ?")) {
-
-            stmt.setString(1, newPassword);
+            stmt.setString(1, hashedPassword);  // Already hashed by servlet
             stmt.setString(2, email);
-
             int rows = stmt.executeUpdate();
-            System.out.println("Update Password affected rows: " + rows);  // DEBUG PRINT
+            System.out.println("Update Password affected rows: " + rows);
             rowUpdated = rows > 0;
-
         } catch (Exception e) {
             System.out.println("Error in updatePassword:");
             e.printStackTrace();
         }
-
         return rowUpdated;
     }
+
 
     // Check if email is registered
     public static boolean isEmailRegistered(String email) {

@@ -10,6 +10,7 @@ import javax.servlet.http.*;
 
 import com.pahanaedu.dao.UserDao;
 import com.pahanaedu.model.User;
+import org.mindrot.jbcrypt.BCrypt;
 
 @WebServlet("/adduser")
 @MultipartConfig(maxFileSize = 16177215) // 16MB
@@ -35,7 +36,7 @@ public class AddUserServlet extends HttpServlet {
         String uempid = request.getParameter("uempid");
         String name = request.getParameter("name");
         String email = request.getParameter("email");
-        String password = request.getParameter("pass");
+        String plainPassword = request.getParameter("pass"); // Original password
         String contact = request.getParameter("contact");
         String role = request.getParameter("role");
 
@@ -48,8 +49,8 @@ public class AddUserServlet extends HttpServlet {
 
         // Validation
         if (uempid == null || uempid.trim().isEmpty() ||
-            name == null || email == null || password == null || contact == null || role == null ||
-            name.trim().isEmpty() || email.trim().isEmpty() || password.trim().isEmpty() ||
+            name == null || email == null || plainPassword == null || contact == null || role == null ||
+            name.trim().isEmpty() || email.trim().isEmpty() || plainPassword.trim().isEmpty() ||
             contact.trim().isEmpty() || role.trim().isEmpty()) {
 
             request.setAttribute("status", "failed");
@@ -70,8 +71,11 @@ public class AddUserServlet extends HttpServlet {
             return;
         }
 
-        // Create and save user
-        User newUser = new User(uempid, name, email, password, contact, role, inputStream);
+        // ✅ HASH the password
+        String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+
+        // Create and save user with hashed password
+        User newUser = new User(uempid, name, email, hashedPassword, contact, role, inputStream);
         boolean success = UserDao.addUser(newUser);
 
         request.setAttribute("status", success ? "success" : "failed");
