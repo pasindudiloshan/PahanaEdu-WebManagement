@@ -65,27 +65,50 @@ public class UserDao {
         }
         return exists;
     }
-
-    /**
-     * Register a new user
-     */
-    public static boolean addUser(User user) {
-        boolean isSuccess = false;
-        String sql = "INSERT INTO users (uname, uemail, upwd, umobile, urole, uphoto) VALUES (?, ?, ?, ?, ?, ?)";
+    
+ // Add this method:
+    public static boolean isUempidExists(String uempid) {
+        boolean exists = false;
+        String sql = "SELECT uempid FROM users WHERE uempid = ?";
 
         try (Connection con = DBUtil.getConnection();
              PreparedStatement pst = con.prepareStatement(sql)) {
 
-            pst.setString(1, user.getName());
-            pst.setString(2, user.getEmail());
-            pst.setString(3, user.getPassword());
-            pst.setString(4, user.getMobile());
-            pst.setString(5, user.getRole());
+            pst.setString(1, uempid);
+            try (ResultSet rs = pst.executeQuery()) {
+                exists = rs.next();
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error in isUempidExists:");
+            e.printStackTrace();
+        }
+        return exists;
+    }
+
+
+    /**
+     * Register a new user
+     */
+ // Modify this method:
+    public static boolean addUser(User user) {
+        boolean isSuccess = false;
+        String sql = "INSERT INTO users (uempid, uname, uemail, upwd, umobile, urole, uphoto) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection con = DBUtil.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setString(1, user.getUempid());
+            pst.setString(2, user.getName());
+            pst.setString(3, user.getEmail());
+            pst.setString(4, user.getPassword());
+            pst.setString(5, user.getMobile());
+            pst.setString(6, user.getRole());
 
             if (user.getPhoto() != null) {
-                pst.setBlob(6, user.getPhoto());
+                pst.setBlob(7, user.getPhoto());
             } else {
-                pst.setNull(6, java.sql.Types.BLOB);
+                pst.setNull(7, java.sql.Types.BLOB);
             }
 
             int rowsInserted = pst.executeUpdate();
@@ -110,15 +133,16 @@ public class UserDao {
              PreparedStatement pst = con.prepareStatement(sql);
              ResultSet rs = pst.executeQuery()) {
 
-            while (rs.next()) {
-                User user = new User();
-                user.setName(rs.getString("uname"));
-                user.setEmail(rs.getString("uemail"));
-                user.setPassword(rs.getString("upwd"));
-                user.setMobile(rs.getString("umobile"));
-                user.setRole(rs.getString("urole"));
-                userList.add(user);
-            }
+        	while (rs.next()) {
+        	    User user = new User();
+        	    user.setUempid(rs.getString("uempid")); // ✅ Added
+        	    user.setName(rs.getString("uname"));
+        	    user.setEmail(rs.getString("uemail"));
+        	    user.setPassword(rs.getString("upwd"));
+        	    user.setMobile(rs.getString("umobile"));
+        	    user.setRole(rs.getString("urole"));
+        	    userList.add(user);
+        	}
 
         } catch (Exception e) {
             System.out.println("Error in getAllUsers:");
@@ -154,20 +178,21 @@ public class UserDao {
     /**
      * Delete a user using email (admin feature maybe)
      */
-    public static boolean deleteUserByEmail(String email) {
-        String sql = "DELETE FROM users WHERE uemail = ?";
+    public static boolean deleteUserByUempid(String uempid) {
+        String sql = "DELETE FROM users WHERE uempid = ?";
         try (Connection con = DBUtil.getConnection();
              PreparedStatement pst = con.prepareStatement(sql)) {
 
-            pst.setString(1, email);
+            pst.setString(1, uempid);
             return pst.executeUpdate() > 0;
 
         } catch (Exception e) {
-            System.out.println("Error in deleteUserByEmail:");
+            System.out.println("Error in deleteUserByUempid:");
             e.printStackTrace();
             return false;
         }
     }
+
 
     /**
      * Update user's password (used in reset password flow)
@@ -210,27 +235,30 @@ public class UserDao {
     
     public static boolean updateUser(String originalEmail, User updatedUser, InputStream photoStream) {
         boolean isUpdated = false;
-        String sqlWithPhoto = "UPDATE users SET uname = ?, uemail = ?, umobile = ?, urole = ?, uphoto = ? WHERE uemail = ?";
-        String sqlWithoutPhoto = "UPDATE users SET uname = ?, uemail = ?, umobile = ?, urole = ? WHERE uemail = ?";
+
+        String sqlWithPhoto = "UPDATE users SET uempid = ?, uname = ?, uemail = ?, umobile = ?, urole = ?, uphoto = ? WHERE uemail = ?";
+        String sqlWithoutPhoto = "UPDATE users SET uempid = ?, uname = ?, uemail = ?, umobile = ?, urole = ? WHERE uemail = ?";
 
         try (Connection con = DBUtil.getConnection()) {
             PreparedStatement pst;
 
             if (photoStream != null) {
                 pst = con.prepareStatement(sqlWithPhoto);
-                pst.setString(1, updatedUser.getName());
-                pst.setString(2, updatedUser.getEmail());
-                pst.setString(3, updatedUser.getMobile());
-                pst.setString(4, updatedUser.getRole());
-                pst.setBlob(5, photoStream);
-                pst.setString(6, originalEmail);
+                pst.setString(1, updatedUser.getUempid());
+                pst.setString(2, updatedUser.getName());
+                pst.setString(3, updatedUser.getEmail());
+                pst.setString(4, updatedUser.getMobile());
+                pst.setString(5, updatedUser.getRole());
+                pst.setBlob(6, photoStream);
+                pst.setString(7, originalEmail);
             } else {
                 pst = con.prepareStatement(sqlWithoutPhoto);
-                pst.setString(1, updatedUser.getName());
-                pst.setString(2, updatedUser.getEmail());
-                pst.setString(3, updatedUser.getMobile());
-                pst.setString(4, updatedUser.getRole());
-                pst.setString(5, originalEmail);
+                pst.setString(1, updatedUser.getUempid());
+                pst.setString(2, updatedUser.getName());
+                pst.setString(3, updatedUser.getEmail());
+                pst.setString(4, updatedUser.getMobile());
+                pst.setString(5, updatedUser.getRole());
+                pst.setString(6, originalEmail);
             }
 
             int rows = pst.executeUpdate();
@@ -241,6 +269,7 @@ public class UserDao {
 
         return isUpdated;
     }
+
 
 }
 

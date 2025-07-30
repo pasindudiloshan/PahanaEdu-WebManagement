@@ -15,11 +15,11 @@ public class DeleteUserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String email = request.getParameter("email");
+        String uempid = request.getParameter("uempid");
         String status;
 
-        if (email != null && !email.trim().isEmpty()) {
-            boolean isDeleted = UserDao.deleteUserByEmail(email);
+        if (uempid != null && !uempid.trim().isEmpty()) {
+            boolean isDeleted = UserDao.deleteUserByUempid(uempid);
             status = isDeleted ? "delete_success" : "failed";
         } else {
             status = "invalid";
