@@ -10,8 +10,7 @@
         response.sendRedirect("login.jsp");
         return;
     }
-    String role = loggedUser.getRole();
-    boolean isAdmin = "Admin".equalsIgnoreCase(role);
+    boolean isAdmin = "Admin".equalsIgnoreCase(loggedUser.getRole());
 
     List<Product> products = ProductDao.getAllProducts();
 %>
@@ -55,7 +54,7 @@
         <h3><i class="fas fa-box"></i> Existing Products</h3>
       </div>
 
-      <table class="data-table" style="width: 100%; border-collapse: collapse;">
+      <table class="data-table">
         <thead>
           <tr>
             <th>Cover</th>
@@ -75,7 +74,7 @@
               <td>
                 <img src="productImage?id=<%= product.getId() %>" 
                      alt="Cover" 
-                     style="height: 80px; width: auto; border: 1px solid #ccc;"
+                     class="book-cover"
                      onerror="this.onerror=null;this.src='images/default-book.png';" />
               </td>
               <td><%= product.getItemId() %></td>
@@ -85,12 +84,9 @@
               <td><%= product.getQuantity() %></td>
               <% if (isAdmin) { %>
               <td>
-                <form action="editproduct.jsp" method="get" style="display:inline;">
-                  <input type="hidden" name="id" value="<%= product.getId() %>" />
-                  <button type="submit" class="btn btn-outline btn-sm">
-                    <i class="fas fa-edit"></i> Edit
-                  </button>
-                </form>
+                <a href="editproduct.jsp?id=<%= product.getId() %>" class="btn btn-outline btn-sm">
+                  <i class="fas fa-edit"></i> Edit
+                </a>
                 <form action="deleteProduct" method="post" class="delete-form" style="display:inline;">
                   <input type="hidden" name="id" value="<%= product.getId() %>" />
                   <button type="button" class="btn btn-outline btn-sm delete-btn">
@@ -115,10 +111,16 @@
 
   if (status === "success") {
     Swal.fire("Success!", "Product added successfully!", "success");
+  } else if (status === "update_success") {
+    Swal.fire("Updated!", "Product updated successfully!", "success");
   } else if (status === "delete_success") {
     Swal.fire("Deleted!", "Product deleted successfully!", "success");
   } else if (status === "failed") {
     Swal.fire("Error", "Operation failed.", "error");
+  } else if (status === "not_found") {
+    Swal.fire("Error", "Product not found.", "error");
+  } else if (status === "error") {
+    Swal.fire("Error", "An unexpected error occurred.", "error");
   }
 
   document.querySelectorAll(".delete-btn").forEach(function (btn) {
@@ -142,3 +144,4 @@
 
 </body>
 </html>
+

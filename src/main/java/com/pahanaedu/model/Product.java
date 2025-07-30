@@ -1,7 +1,7 @@
 package com.pahanaedu.model;
 
 public class Product {
-    private int id;              // New auto-increment PK
+    private int id;
     private String itemId;
     private String name;
     private String description;
@@ -11,17 +11,7 @@ public class Product {
 
     public Product() {}
 
-    public Product(int id, String itemId, String name, String description, double price, int quantity, byte[] image) {
-        this.id = id;
-        this.itemId = itemId;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.quantity = quantity;
-        this.image = image;
-    }
-
-    // Getters & setters
+    // Getters and setters
 
     public int getId() {
         return id;

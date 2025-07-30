@@ -1,20 +1,24 @@
 @charset "UTF-8";
 
-/* ====== Container Layout ====== */
-.container {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  grid-template-rows: 70px 1fr;
-  height: 100vh;
-  background: #f4f6f8;
-  overflow: hidden;
+/* ====== CSS VARIABLES (IMPORTANT) ====== */
+:root {
+  --primary-light: #3a0ca3;
+  --radius: 12px;
+  --radius-sm: 6px;
+  --shadow-sm: 0 4px 8px rgba(0, 0, 0, 0.05);
+  --shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --text-light: #888;
+  --text: #333;
+  --success: #2ecc71;
+  --transition: all 0.3s ease;
 }
 
-
-/* ====== Main Content Wrapper ====== */
-.main-container {
+/* ====== Main Content ====== */
+.main-content {
   grid-column: 2;
-  padding: 30px;
+  grid-row: 2;
+  padding: 30px 40px;
+  overflow-y: auto;
   background-color: #f5f6fa;
 }
 
@@ -191,7 +195,7 @@
   color: #e74c3c;
 }
 
-/* ====== Responsive Tweaks ====== */
+/* ====== Responsive ====== */
 @media (max-width: 768px) {
   .stats-cards {
     grid-template-columns: 1fr;
@@ -202,7 +206,7 @@
     align-items: flex-start;
   }
 
-  .main-container {
+  .main-content {
     padding: 20px 10px;
   }
 }

@@ -54,7 +54,6 @@
   align-items: center;
   gap: 6px;
 }
-
 .btn-primary {
   background-color: #3a0ca3;
   color: white;
@@ -99,6 +98,70 @@
 .card-title i {
   font-size: 22px;
   color: #7209b7;
+}
+
+/* Table Styles */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 15px -5px rgba(58, 12, 163, 0.2);
+}
+.data-table th,
+.data-table td {
+  padding: 20px 22px;
+  text-align: left;
+  font-size: 15px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+.data-table th {
+  background-color: #7209b7;
+  color: white;
+  font-weight: 600;
+}
+.data-table tbody tr {
+  transition: all 0.2s ease-in-out;
+}
+.data-table tbody tr:hover {
+  background-color: #fef8ff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  cursor: default;
+}
+
+/* Book/Product Image */
+.book-cover {
+  width: 80px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Form in Table */
+.data-table form {
+  display: inline;
+  margin: 0 4px;
+}
+.data-table button {
+  border: 2px solid #7209b7;
+  background: transparent;
+  color: #7209b7;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.data-table button:hover {
+  background-color: #7209b7;
+  color: white;
 }
 
 /* Form Styles */
@@ -216,6 +279,7 @@ textarea.form-input {
   background-color: #7209b7;
   color: white;
 }
+
 
 /* Responsive */
 @media (max-width: 768px) {

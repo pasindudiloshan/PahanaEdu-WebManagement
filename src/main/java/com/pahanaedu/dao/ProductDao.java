@@ -43,7 +43,7 @@ public class ProductDao {
 
     public static List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT id, item_id, item_name, description, price, quantity FROM products ORDER BY id DESC";
+        String sql = "SELECT id, item_id, item_name, description, price, quantity, image FROM products ORDER BY id DESC";
 
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -57,6 +57,7 @@ public class ProductDao {
                 p.setDescription(rs.getString("description"));
                 p.setPrice(rs.getDouble("price"));
                 p.setQuantity(rs.getInt("quantity"));
+                p.setImage(rs.getBytes("image"));
                 products.add(p);
             }
 
@@ -66,6 +67,85 @@ public class ProductDao {
 
         return products;
     }
-}
 
+    public static Product getProductById(int id) {
+        String sql = "SELECT * FROM products WHERE id=?";
+        Product product = null;
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                product = new Product();
+                product.setId(rs.getInt("id"));
+                product.setItemId(rs.getString("item_id"));
+                product.setName(rs.getString("item_name"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getDouble("price"));
+                product.setQuantity(rs.getInt("quantity"));
+                product.setImage(rs.getBytes("image"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return product;
+    }
+
+
+    public static boolean updateProduct(Product product, InputStream imageStream) {
+        String sqlWithImage = "UPDATE products SET item_id = ?, item_name = ?, description = ?, price = ?, quantity = ?, image = ? WHERE id = ?";
+        String sqlWithoutImage = "UPDATE products SET item_id = ?, item_name = ?, description = ?, price = ?, quantity = ? WHERE id = ?";
+
+        try (Connection conn = DBUtil.getConnection()) {
+            PreparedStatement pst;
+            if (imageStream != null) {
+                pst = conn.prepareStatement(sqlWithImage);
+                pst.setString(1, product.getItemId());
+                pst.setString(2, product.getName());
+                pst.setString(3, product.getDescription());
+                pst.setDouble(4, product.getPrice());
+                pst.setInt(5, product.getQuantity());
+                pst.setBlob(6, imageStream);
+                pst.setInt(7, product.getId());
+            } else {
+                pst = conn.prepareStatement(sqlWithoutImage);
+                pst.setString(1, product.getItemId());
+                pst.setString(2, product.getName());
+                pst.setString(3, product.getDescription());
+                pst.setDouble(4, product.getPrice());
+                pst.setInt(5, product.getQuantity());
+                pst.setInt(6, product.getId());
+            }
+
+            int rows = pst.executeUpdate();
+            return rows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
+    public static boolean deleteProductById(int id) {
+        String sql = "DELETE FROM products WHERE id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+
+            int rowsDeleted = ps.executeUpdate();
+            return rowsDeleted > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}
 
