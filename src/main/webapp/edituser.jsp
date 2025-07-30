@@ -12,50 +12,39 @@
     }
 
     String email = request.getParameter("email");
-    String name = "", contact = "", role = "";
+    String name = "", contact = "", role = "", uempid = "";
 
     if (email != null && !email.isEmpty()) {
-        Connection con = null;
-        PreparedStatement pst = null;
-        ResultSet rs = null;
+        try (Connection con = DBUtil.getConnection();
+             PreparedStatement pst = con.prepareStatement("SELECT * FROM users WHERE uemail = ?")) {
 
-        try {
-            con = DBUtil.getConnection();
-            pst = con.prepareStatement("SELECT * FROM users WHERE uemail = ?");
             pst.setString(1, email);
-            rs = pst.executeQuery();
+            ResultSet rs = pst.executeQuery();
 
             if (rs.next()) {
                 name = rs.getString("uname");
-                contact = rs.getString("umobile");  // fixed here
+                contact = rs.getString("umobile");
                 role = rs.getString("urole");
+                uempid = rs.getString("uempid");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (rs != null) try { rs.close(); } catch (Exception e) {}
-            if (pst != null) try { pst.close(); } catch (Exception e) {}
-            if (con != null) try { con.close(); } catch (Exception e) {}
         }
     }
 %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edit User</title>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" />
   <link rel="stylesheet" href="css/user-management.css" />
   <link rel="stylesheet" href="css/sidebar-header.css" />
-  <link rel="stylesheet" href="alert/dist/sweetalert.css" />
-  <link rel="icon" type="image/x-icon" href="images/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
 </head>
 <body>
-
 <div class="container">
   <%@ include file="sidebar.jsp" %>
   <%@ include file="header.jsp" %>
@@ -71,23 +60,26 @@
     </div>
 
     <div class="table-card">
-      <div class="card-title">
-        <h3><i class="fas fa-user-edit"></i> Update User Details</h3>
-      </div>
+      <div class="card-title"><h3><i class="fas fa-user-edit"></i> Update User Details</h3></div>
 
       <div style="padding: 24px;">
         <form action="UpdateUserServlet" method="post" enctype="multipart/form-data">
-          <!-- Hidden original email to identify user -->
           <input type="hidden" name="originalEmail" value="<%= email %>" />
 
           <div class="form-row-two">
             <div class="form-group">
+              <label for="uempid">Employee ID <span style="color:red">*</span></label>
+              <input type="text" name="uempid" id="uempid" value="<%= uempid %>" class="form-input"  required />
+            </div>
+            <div class="form-group">
               <label for="name">Full Name <span style="color:red">*</span></label>
               <input type="text" name="name" id="name" value="<%= name %>" class="form-input" required />
             </div>
+          </div>
+
+          <div class="form-row-two">
             <div class="form-group">
               <label for="email">Email Address <span style="color:red">*</span></label>
-              <!-- IMPORTANT: name must be 'email' to match servlet -->
               <input type="email" name="email" id="email" value="<%= email %>" class="form-input" required />
             </div>
             <div class="form-group">
@@ -121,11 +113,8 @@
   </div>
 </div>
 
-<!-- Scripts -->
-<script src="vendor/jquery/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="js/main.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
 </body>
 </html>
 

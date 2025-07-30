@@ -10,10 +10,7 @@
         response.sendRedirect("login.jsp");
         return;
     }
-    if (!"Admin".equalsIgnoreCase(loggedUser.getRole())) {
-        response.sendRedirect("index.jsp");
-        return;
-    }
+    boolean isAdmin = "Admin".equalsIgnoreCase(loggedUser.getRole());
 
     List<Customer> customers = CustomerDao.getAllCustomers();
 %>
@@ -41,9 +38,11 @@
     <div class="page-title">
       <div class="title">Customer Management</div>
       <div class="action-buttons">
-        <a href="addcustomer.jsp" class="btn btn-primary">
-          <i class="fas fa-user-plus"></i> Add Customer
-        </a>
+        <% if (isAdmin) { %>
+          <a href="addcustomer.jsp" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Add Customer
+          </a>
+        <% } %>
       </div>
     </div>
 
@@ -62,7 +61,9 @@
             <th>Phone</th>
             <th>City</th>
             <th>Registered</th>
-            <th>Actions</th>
+            <% if (isAdmin) { %>
+              <th>Actions</th>
+            <% } %>
           </tr>
         </thead>
         <tbody>
@@ -80,21 +81,24 @@
               <td><%= c.getPhone() != null ? c.getPhone() : "-" %></td>
               <td><%= c.getCity() != null ? c.getCity() : "-" %></td>
               <td><%= c.getRegistrationDate() %></td>
-              <td>
-                <form action="editcustomer.jsp" method="get" style="display:inline;">
-                  <input type="hidden" name="account" value="<%= c.getAccountNumber() %>" />
-                  <button type="submit" class="btn btn-outline btn-sm">
-                    <i class="fas fa-edit"></i> Edit
-                  </button>
-                </form>
+              
+              <% if (isAdmin) { %>
+                <td>
+                  <form action="editcustomer.jsp" method="get" style="display:inline;">
+                    <input type="hidden" name="account" value="<%= c.getAccountNumber() %>" />
+                    <button type="submit" class="btn btn-outline btn-sm">
+                      <i class="fas fa-edit"></i> Edit
+                    </button>
+                  </form>
 
-                <form action="DeleteCustomer" method="post" class="delete-form" style="display:inline;">
-                  <input type="hidden" name="account" value="<%= c.getAccountNumber() %>" />
-                  <button type="button" class="btn btn-outline btn-sm delete-btn">
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                </form>
-              </td>
+                  <form action="DeleteCustomer" method="post" class="delete-form" style="display:inline;">
+                    <input type="hidden" name="account" value="<%= c.getAccountNumber() %>" />
+                    <button type="button" class="btn btn-outline btn-sm delete-btn">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </form>
+                </td>
+              <% } %>
             </tr>
           <% } %>
         </tbody>
@@ -143,4 +147,3 @@
 
 </body>
 </html>
-
