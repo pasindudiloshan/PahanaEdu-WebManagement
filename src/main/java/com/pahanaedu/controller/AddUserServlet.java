@@ -12,13 +12,14 @@ import com.pahanaedu.dao.UserDao;
 import com.pahanaedu.model.User;
 
 @WebServlet("/adduser")
-@MultipartConfig(maxFileSize = 16177215) // 16MB
+@MultipartConfig(maxFileSize = 16177215) // 16MB max
 public class AddUserServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
+        // Session and role check
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
             response.sendRedirect("login.jsp");
@@ -31,24 +32,22 @@ public class AddUserServlet extends HttpServlet {
             return;
         }
 
-        // Collect form data
-        String uempid = request.getParameter("uempid");
+        // Get form fields
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String password = request.getParameter("pass");
         String contact = request.getParameter("contact");
         String role = request.getParameter("role");
 
-        // File upload
+        // Handle uploaded photo
         Part filePart = request.getPart("photo");
         InputStream inputStream = null;
         if (filePart != null && filePart.getSize() > 0) {
             inputStream = filePart.getInputStream();
         }
 
-        // Validation
-        if (uempid == null || uempid.trim().isEmpty() ||
-            name == null || email == null || password == null || contact == null || role == null ||
+        // Input validation
+        if (name == null || email == null || password == null || contact == null || role == null ||
             name.trim().isEmpty() || email.trim().isEmpty() || password.trim().isEmpty() ||
             contact.trim().isEmpty() || role.trim().isEmpty()) {
 
@@ -57,24 +56,24 @@ public class AddUserServlet extends HttpServlet {
             return;
         }
 
-        // Duplicate checks
+        // Check for duplicate email
         if (UserDao.isEmailExists(email)) {
             request.setAttribute("status", "email_exists");
             request.getRequestDispatcher("adduser.jsp").forward(request, response);
             return;
         }
 
-        if (UserDao.isUempidExists(uempid)) {
-            request.setAttribute("status", "uempid_exists");
-            request.getRequestDispatcher("adduser.jsp").forward(request, response);
-            return;
-        }
+        // Create new User object (password is plain text here; hash it in production)
+        User newUser = new User(name, email, password, contact, role, inputStream);
 
-        // Create and save user
-        User newUser = new User(uempid, name, email, password, contact, role, inputStream);
         boolean success = UserDao.addUser(newUser);
 
-        request.setAttribute("status", success ? "success" : "failed");
+        if (success) {
+            request.setAttribute("status", "success");
+        } else {
+            request.setAttribute("status", "failed");
+        }
+
         request.getRequestDispatcher("adduser.jsp").forward(request, response);
     }
 }

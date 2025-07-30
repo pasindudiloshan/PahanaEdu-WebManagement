@@ -6,33 +6,36 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import com.pahanaedu.dao.UserDao;
 import com.pahanaedu.model.User;
 
 @WebServlet("/UpdateUserServlet")
-@MultipartConfig(maxFileSize = 16177215)  // 16MB max
+@MultipartConfig(maxFileSize = 16177215)  // 16MB max upload
 public class UpdateUserServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         request.setCharacterEncoding("UTF-8");
 
-        String originalEmail = request.getParameter("originalEmail");
+        String originalEmail = request.getParameter("originalEmail");  // Hidden field from form
         String name = request.getParameter("name");
         String newEmail = request.getParameter("email");
         String role = request.getParameter("role");
         String contact = request.getParameter("contact");
-        String uempid = request.getParameter("uempid");
 
         Part photoPart = request.getPart("photo");
-        InputStream photoStream = (photoPart != null && photoPart.getSize() > 0) ? photoPart.getInputStream() : null;
+        InputStream photoStream = null;
+        if (photoPart != null && photoPart.getSize() > 0) {
+            photoStream = photoPart.getInputStream();
+        }
 
         User updatedUser = new User();
-        updatedUser.setUempid(uempid);
         updatedUser.setName(name);
         updatedUser.setEmail(newEmail);
         updatedUser.setMobile(contact);
@@ -40,6 +43,11 @@ public class UpdateUserServlet extends HttpServlet {
 
         boolean updated = UserDao.updateUser(originalEmail, updatedUser, photoStream);
 
-        response.sendRedirect("usermanagement.jsp?status=" + (updated ? "success" : "failed"));
+        if (updated) {
+            response.sendRedirect("usermanagement.jsp?status=success");
+        } else {
+            response.sendRedirect("usermanagement.jsp?status=failed");
+        }
     }
 }
+
