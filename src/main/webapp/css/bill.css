@@ -1,0 +1,39 @@
+.form-section {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.form-divider {
+  margin: 20px 0;
+  border-top: 1px solid #ddd;
+}
+
+.totals {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f1f5ff;
+  border-radius: 8px;
+  color: #1a1a2e;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.totals p {
+  margin: 6px 0;
+}
+
+#billItemsTable input {
+  display: none;
+}
+
+#billItemsTable td,
+#billItemsTable th {
+  text-align: center;
+}
+
+.flex-2 {
+  flex: 2;
+}
+

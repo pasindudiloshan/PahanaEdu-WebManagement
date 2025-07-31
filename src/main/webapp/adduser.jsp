@@ -65,7 +65,7 @@
                 class="form-input"
                 maxlength="20"
                 required
-                pattern="PEB-UEMP-\d{3,}"
+                pattern="PEB-EMP-\d{3,}"
                 title="Enter 3 digits only (e.g., 001)"
                 autocomplete="off"
               />
@@ -137,7 +137,7 @@
     swal("Warning", "Employee ID already exists. Use a different ID.", "warning");
   }
 
-  const prefix = "PEB-UEMP-";
+  const prefix = "PEB-EMP-";
   const empInput = document.getElementById("uempid");
 
   window.addEventListener("DOMContentLoaded", () => {

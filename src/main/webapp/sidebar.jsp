@@ -24,14 +24,14 @@
     </a>
 
     <div class="menu-heading">Reports</div>
-    <div class="nav-item <%= currentPage.endsWith("sales.jsp") ? "active" : "" %>">
+    <a href="billinghistory.jsp" class="nav-item <%= currentPage.endsWith("billinghistory.jsp") ? "active" : "" %>">
       <i class="fas fa-coins"></i>
       <span>Sales</span>
-    </div>
-    <div class="nav-item <%= currentPage.endsWith("bills.jsp") ? "active" : "" %>">
+    </a>
+    <a href="createbill.jsp" class="nav-item <%= currentPage.endsWith("createbill.jsp") ? "active" : "" %>">
       <i class="fas fa-file-invoice-dollar"></i>
       <span>Bills</span>
-    </div>
+    </a>
 
     <div class="menu-heading">Admin</div>
     <a href="usermanagement.jsp" class="nav-item <%= currentPage.endsWith("usermanagement.jsp") ? "active" : "" %>">
