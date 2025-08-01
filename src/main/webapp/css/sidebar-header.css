@@ -277,6 +277,7 @@ body {
   border-color: #c2185b;
 }
 
+
 /* Responsive for sidebar toggling */
 @media (max-width: 992px) {
   .sidebar {

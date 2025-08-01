@@ -1,38 +1,46 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.List, java.util.ArrayList, java.text.SimpleDateFormat" %>
+<%@ page import="java.util.List, java.util.ArrayList, java.util.Map, java.text.SimpleDateFormat, java.util.HashMap, java.util.Date" %>
 <%@ page import="java.sql.Connection, java.sql.SQLException" %>
-<%@ page import="com.pahanaedu.model.Bill, com.pahanaedu.model.User" %>
-<%@ page import="com.pahanaedu.dao.BillDao" %>
+<%@ page import="com.pahanaedu.model.Bill, com.pahanaedu.model.User, com.pahanaedu.model.Customer" %>
+<%@ page import="com.pahanaedu.dao.BillDao, com.pahanaedu.dao.CustomerDao" %>
 <%@ page import="com.pahanaedu.util.DBUtil" %>
 
 <%
-    User user = (User) session.getAttribute("user");
-    if (user == null || !"Admin".equalsIgnoreCase(user.getRole())) {
-        response.sendRedirect("login.jsp");
-        return;
-    }
-
     Connection conn = null;
     BillDao billDao = null;
     List<Bill> bills = new ArrayList<>();
+    Map<Integer, Integer> quantities = new HashMap<>();
+
     String filterAccNo = request.getParameter("accountNumber");
     String filterDateStr = request.getParameter("billDate");
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    java.util.Date filterDate = null;
+    Date filterDate = null;
+    boolean invalidDate = false;
 
     try {
         if (filterDateStr != null && !filterDateStr.isEmpty()) {
             filterDate = sdf.parse(filterDateStr);
+            if (filterDate.after(new Date())) {
+                invalidDate = true; // future date
+            }
         }
 
         conn = DBUtil.getConnection();
         billDao = new BillDao(conn);
 
-        if ((filterAccNo != null && !filterAccNo.trim().isEmpty()) || filterDate != null) {
-            bills = billDao.getFilteredBills(filterAccNo, filterDate);  
-        } else {
+        if (!invalidDate && ((filterAccNo != null && !filterAccNo.trim().isEmpty() && !filterAccNo.equals("PEB-ACC-")) || filterDate != null)) {
+            bills = billDao.getFilteredBills(
+                (filterAccNo != null && !filterAccNo.trim().isEmpty() && !filterAccNo.equals("PEB-ACC-")) ? filterAccNo.trim() : null,
+                filterDate
+            );
+        } else if (!invalidDate) {
             bills = billDao.getAllBills();
         }
+
+        if (bills != null && !bills.isEmpty()) {
+            quantities = billDao.getTotalQuantitiesForBills(bills);
+        }
+
     } catch (Exception e) {
         e.printStackTrace();
     } finally {
@@ -67,8 +75,9 @@
             Object finalAmount = request.getAttribute("finalAmount");
             if (finalAmount != null) {
         %>
-            <div class="alert-success" style="margin-bottom: 20px; background: #e9fbe9; padding: 12px; border-left: 5px solid green;">
-                ✅ Bill Created Successfully. Final Amount: <strong>Rs. <%= String.format("%.2f", finalAmount) %></strong>
+            <div class="custom-alert success-alert">
+                <i class="fas fa-check-circle"></i>
+                Bill Created Successfully. Final Amount: <strong>Rs. <%= String.format("%.2f", finalAmount) %></strong>
             </div>
         <% } %>
 
@@ -100,44 +109,59 @@
                 <thead>
                     <tr>
                         <th>Bill ID</th>
+                        <th>Customer Image</th>
+                        <th>Customer Name</th>
                         <th>Account Number</th>
                         <th>Date</th>
                         <th>Payment Method</th>
-                        <th>Discount (%)</th>
-                        <th>Total Amount</th>
-                        <th>Final Amount</th>
+                        <th>Total Quantity</th>
+                        <th>Amount</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <%
-                        if (bills != null && !bills.isEmpty()) {
-                            for (Bill b : bills) {
-                    %>
-                        <tr>
-                            <td><%= b.getId() %></td>
-                            <td><%= b.getAccountNumber() %></td>
-                            <td><%= (b.getBillingDate() != null) ? sdf.format(b.getBillingDate()) : "" %></td>
-                            <td><%= b.getPaymentMethod() %></td>
-                            <td><%= String.format("%.2f", b.getDiscountPercent()) %></td>
-                            <td>Rs. <%= String.format("%.2f", b.getTotalAmount()) %></td>
-                            <td>Rs. <%= String.format("%.2f", b.getFinalAmount()) %></td>
-                            <td>
-                                <a href="viewbill.jsp?id=<%= b.getId() %>" class="btn btn-sm btn-outline">
-                                    <i class="fas fa-eye"></i> View
-                                </a>
-                            </td>
-                        </tr>
-                    <%
-                            }
-                        } else {
-                    %>
-                        <tr>
-                            <td colspan="8" class="text-center text-muted">No bills found.</td>
-                        </tr>
-                    <%
+                <%
+                    if (invalidDate) {
+                %>
+                    <tr>
+                        <td colspan="9" style="text-align:center; color:red;">Cannot filter by a future date.</td>
+                    </tr>
+                <%
+                    } else if (bills == null || bills.isEmpty()) {
+                %>
+                    <tr>
+                        <td colspan="9" style="text-align:center;">No records found.</td>
+                    </tr>
+                <%
+                    } else {
+                        for (Bill b : bills) {
+                            Customer cust = CustomerDao.getCustomerByAccount(b.getAccountNumber());
+                            int totalQty = quantities.getOrDefault(b.getId(), 0);
+                %>
+                    <tr>
+                        <td><%= b.getId() %></td>
+                        <td>
+                            <img src="customerImage?account=<%= b.getAccountNumber() %>"
+                                 alt="Customer Photo"
+                                 style="width:40px; height:40px; border-radius:50%; object-fit:cover;"
+                                 onerror="this.onerror=null;this.src='images/default-user.png';">
+                        </td>
+                        <td><%= (cust != null) ? cust.getFullName() : "Unknown" %></td>
+                        <td><%= b.getAccountNumber() %></td>
+                        <td><%= (b.getBillingDate() != null) ? sdf.format(b.getBillingDate()) : "" %></td>
+                        <td><%= b.getPaymentMethod() %></td>
+                        <td><%= totalQty %></td>
+                        <td>Rs. <%= String.format("%.2f", b.getFinalAmount()) %></td>
+                        <td>
+                            <a href="viewbill.jsp?id=<%= b.getId() %>" class="btn btn-sm btn-outline">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                <%
                         }
-                    %>
+                    }
+                %>
                 </tbody>
             </table>
         </div>
@@ -150,34 +174,35 @@
 <script src="js/main.js"></script>
 
 <script>
-  const prefix = "PEB-ACC-";
-  const empInput = document.getElementById("uempid");
+    const prefix = "PEB-ACC-";
+    const empInput = document.getElementById("uempid");
 
-  window.addEventListener("DOMContentLoaded", () => {
-    if (!empInput.value.startsWith(prefix)) {
-      empInput.value = prefix;
-      empInput.setSelectionRange(prefix.length, prefix.length);
-    }
-  });
+    window.addEventListener("DOMContentLoaded", () => {
+        if (!empInput.value.startsWith(prefix)) {
+            empInput.value = prefix;
+            empInput.setSelectionRange(prefix.length, prefix.length);
+        }
+    });
 
-  empInput.addEventListener("keydown", (e) => {
-    const cursor = empInput.selectionStart;
-    if ((e.key === "Backspace" || e.key === "ArrowLeft") && cursor <= prefix.length) {
-      e.preventDefault();
-    }
-    if (cursor < prefix.length && e.key.length === 1) {
-      e.preventDefault();
-    }
-  });
+    empInput.addEventListener("keydown", (e) => {
+        const cursor = empInput.selectionStart;
+        if ((e.key === "Backspace" || e.key === "ArrowLeft") && cursor <= prefix.length) {
+            e.preventDefault();
+        }
+        if (cursor < prefix.length && e.key.length === 1) {
+            e.preventDefault();
+        }
+    });
 
-  empInput.addEventListener("input", () => {
-    if (!empInput.value.startsWith(prefix)) {
-      const digits = empInput.value.replace(/[^0-9]/g, "").slice(0, 3);
-      empInput.value = prefix + digits;
-    }
-  });
+    empInput.addEventListener("input", () => {
+        if (!empInput.value.startsWith(prefix)) {
+            const digits = empInput.value.replace(/[^0-9]/g, "").slice(0, 3);
+            empInput.value = prefix + digits;
+        }
+    });
 </script>
 
 </body>
 </html>
+
 

@@ -7,11 +7,8 @@ public class Bill {
     private String accountNumber;
     private Date billingDate;
     private String paymentMethod;
-    private double discountPercent;
-    private double totalAmount;
     private double finalAmount;
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -42,22 +39,6 @@ public class Bill {
 
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
-    }
-
-    public double getDiscountPercent() {
-        return discountPercent;
-    }
-
-    public void setDiscountPercent(double discountPercent) {
-        this.discountPercent = discountPercent;
-    }
-
-    public double getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(double totalAmount) {
-        this.totalAmount = totalAmount;
     }
 
     public double getFinalAmount() {
