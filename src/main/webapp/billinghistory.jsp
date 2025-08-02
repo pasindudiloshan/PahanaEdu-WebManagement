@@ -28,13 +28,17 @@
         conn = DBUtil.getConnection();
         billDao = new BillDao(conn);
 
-        if (!invalidDate && ((filterAccNo != null && !filterAccNo.trim().isEmpty() && !filterAccNo.equals("PEB-ACC-")) || filterDate != null)) {
+        String accNumberInput = (filterAccNo != null) ? filterAccNo.trim() : "";
+        boolean hasAccountFilter = !accNumberInput.isEmpty() && !accNumberInput.equals("PEB-ACC-");
+        boolean hasDateFilter = (filterDate != null);
+
+        if (!invalidDate && (hasAccountFilter || hasDateFilter)) {
             bills = billDao.getFilteredBills(
-                (filterAccNo != null && !filterAccNo.trim().isEmpty() && !filterAccNo.equals("PEB-ACC-")) ? filterAccNo.trim() : null,
-                filterDate
+                hasAccountFilter ? accNumberInput : null,
+                hasDateFilter ? filterDate : null
             );
         } else if (!invalidDate) {
-            bills = billDao.getAllBills();
+            bills = billDao.getAllBills(); // Load all bills if no filters applied
         }
 
         if (bills != null && !bills.isEmpty()) {
@@ -82,7 +86,7 @@
         <% } %>
 
         <!-- Filter Form -->
-        <form method="get" class="form-row-two" style="margin-bottom: 20px;">
+        <form method="get" class="form-row-two" style="margin-bottom: 20px;" onsubmit="return validateFilterForm();">
             <div class="form-group">
                 <label for="accountNumber">Filter by Account Number:</label>
                 <input type="text" name="accountNumber" id="uempid" class="form-input"
@@ -200,6 +204,17 @@
             empInput.value = prefix + digits;
         }
     });
+
+    function validateFilterForm() {
+        const accountNumber = document.getElementById("uempid").value.trim();
+        const billDate = document.getElementById("billDate").value.trim();
+
+        if ((accountNumber === "" || accountNumber === "PEB-ACC-") && billDate === "") {
+            // Optional: You can show a message or just allow it to load all bills.
+            return true; // Allow form to submit and load all bills.
+        }
+        return true;
+    }
 </script>
 
 </body>

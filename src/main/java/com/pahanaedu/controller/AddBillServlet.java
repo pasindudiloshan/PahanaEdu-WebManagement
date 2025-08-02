@@ -31,14 +31,18 @@ public class AddBillServlet extends HttpServlet {
             String[] quantities = request.getParameterValues("quantity[]");
             String[] unitPrices = request.getParameterValues("unitPrice[]");
 
+            String finalAmountStr = request.getParameter("finalAmount");  // <-- From hidden field in form
+            double finalAmount = parseDoubleSafe(finalAmountStr, 0.0);
+
             if (accountNumber == null || paymentMethod == null ||
-                productIds == null || quantities == null || unitPrices == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing billing data.");
+                productIds == null || quantities == null || unitPrices == null ||
+                finalAmount <= 0.0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing or invalid billing data.");
                 return;
             }
 
-            List<BillItem> billItems = new ArrayList<>();
-            double totalAmount = 0.0;
+            // === DEDUPLICATION LOGIC START ===
+            Map<String, BillItem> uniqueItemsMap = new HashMap<>();
 
             for (int i = 0; i < productIds.length; i++) {
                 String productId = safe(productIds[i]);
@@ -48,25 +52,32 @@ public class AddBillServlet extends HttpServlet {
                 double price = parseDoubleSafe(unitPrices[i], 0.0);
                 if (qty <= 0 || price < 0.0) continue;
 
-                double subtotal = qty * price;
-                totalAmount += subtotal;
-
-                BillItem item = new BillItem();
-                item.setProductId(productId);
-                item.setQuantity(qty);
-                item.setUnitPrice(price);
-                billItems.add(item);
+                if (uniqueItemsMap.containsKey(productId)) {
+                    BillItem existingItem = uniqueItemsMap.get(productId);
+                    existingItem.setQuantity(existingItem.getQuantity() + qty);
+                    // Unit price remains as-is.
+                } else {
+                    BillItem item = new BillItem();
+                    item.setProductId(productId);
+                    item.setQuantity(qty);
+                    item.setUnitPrice(price);
+                    uniqueItemsMap.put(productId, item);
+                }
             }
+
+            List<BillItem> billItems = new ArrayList<>(uniqueItemsMap.values());
 
             if (billItems.isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No valid items added.");
                 return;
             }
+            // === DEDUPLICATION LOGIC END ===
 
+            // Save Bill with Final Amount (after discount)
             Bill bill = new Bill();
             bill.setAccountNumber(accountNumber);
             bill.setPaymentMethod(paymentMethod);
-            bill.setFinalAmount(totalAmount);
+            bill.setFinalAmount(finalAmount);  // <-- Correct final amount after discount
             bill.setBillingDate(new java.sql.Date(System.currentTimeMillis()));
 
             conn = DBUtil.getConnection();
@@ -75,18 +86,18 @@ public class AddBillServlet extends HttpServlet {
             BillDao dao = new BillDao(conn);
             int billId = dao.insertBill(bill);
 
-            // First reduce stock per item
+            // Reduce stock per item
             for (BillItem item : billItems) {
                 dao.reduceProductStock(item.getProductId(), item.getQuantity());
                 item.setBillId(billId); // set bill ID after stock deduction
             }
 
-            // Then insert all items
+            // Insert Bill Items
             dao.insertBillItems(billItems);
 
             conn.commit(); // all good
 
-            request.setAttribute("finalAmount", totalAmount);
+            request.setAttribute("finalAmount", finalAmount); // <-- Pass correct final amount to JSP message
             request.getRequestDispatcher("billinghistory.jsp").forward(request, response);
 
         } catch (Exception e) {
@@ -94,7 +105,7 @@ public class AddBillServlet extends HttpServlet {
 
             if (conn != null) {
                 try {
-                    conn.rollback(); // rollback everything if any failure
+                    conn.rollback(); // rollback on failure
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
@@ -133,5 +144,3 @@ public class AddBillServlet extends HttpServlet {
         }
     }
 }
-
-
