@@ -28,6 +28,9 @@
         response.sendRedirect("productmanagement.jsp?status=not_found");
         return;
     }
+
+    // You can hardcode categories here or fetch from DB if you want
+    String[] categories = {"Fiction", "Non-Fiction", "Science", "Biography", "Children", "Other"};
 %>
 
 <!DOCTYPE html>
@@ -87,6 +90,16 @@
           </div>
 
           <div class="form-row-two">
+            <div class="form-group">
+              <label for="category">Category *</label>
+              <select name="category" class="form-input" required>
+                <option value="">-- Select Category --</option>
+                <% for (String cat : categories) { %>
+                  <option value="<%= cat %>" <%= cat.equals(product.getCategory()) ? "selected" : "" %>><%= cat %></option>
+                <% } %>
+              </select>
+            </div>
+
             <div class="form-group" style="flex: 1;">
               <label for="description">Description</label>
               <textarea name="description" class="form-input" rows="4"><%= product.getDescription() %></textarea>

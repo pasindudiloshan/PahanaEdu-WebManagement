@@ -51,58 +51,69 @@
         <h3><i class="fas fa-users"></i> Registered Customers</h3>
       </div>
 
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Photo</th>
-            <th>Account No</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>City</th>
-            <th>Registered</th>
-            <% if (isAdmin) { %>
-              <th>Actions</th>
-            <% } %>
-          </tr>
-        </thead>
-        <tbody>
-          <% for (Customer c : customers) { %>
-            <tr>
-              <td>
-                <img src="customerImage?account=<%= c.getAccountNumber() %>"
-                     alt="Customer Photo"
-                     style="width:40px; height:40px; border-radius:50%; object-fit:cover;"
-                     onerror="this.onerror=null;this.src='images/default-user.png';" />
-              </td>
-              <td><%= c.getAccountNumber() %></td>
-              <td><%= c.getFullName() %></td>
-              <td><%= c.getEmail() != null ? c.getEmail() : "-" %></td>
-              <td><%= c.getPhone() != null ? c.getPhone() : "-" %></td>
-              <td><%= c.getCity() != null ? c.getCity() : "-" %></td>
-              <td><%= c.getRegistrationDate() %></td>
-              
-              <% if (isAdmin) { %>
-                <td>
-                  <form action="editcustomer.jsp" method="get" style="display:inline;">
-                    <input type="hidden" name="account" value="<%= c.getAccountNumber() %>" />
-                    <button type="submit" class="btn btn-outline btn-sm">
-                      <i class="fas fa-edit"></i> Edit
-                    </button>
-                  </form>
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Photo</th>
+      <th>Account No</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>City</th>
+      <th>Address</th> <!-- Two-line: address + postal code -->
+      <th>Registered</th>
+      <% if (isAdmin) { %>
+        <th>Actions</th>
+      <% } %>
+    </tr>
+  </thead>
+  <tbody>
+    <% for (Customer c : customers) { %>
+      <tr>
+        <td>
+          <img src="customerImage?account=<%= c.getAccountNumber() %>"
+               alt="Customer Photo"
+               style="width:40px; height:40px; border-radius:50%; object-fit:cover;"
+               onerror="this.onerror=null;this.src='images/default-user.png';" />
+        </td>
+        <td><%= c.getAccountNumber() %></td>
+        <td><%= c.getFullName() %></td>
+        <td><%= c.getEmail() != null ? c.getEmail() : "-" %></td>
+        <td><%= c.getPhone() != null ? c.getPhone() : "-" %></td>
+        <td><%= c.getCity() != null ? c.getCity() : "-" %></td>
 
-                  <form action="DeleteCustomer" method="post" class="delete-form" style="display:inline;">
-                    <input type="hidden" name="account" value="<%= c.getAccountNumber() %>" />
-                    <button type="button" class="btn btn-outline btn-sm delete-btn">
-                      <i class="fas fa-trash-alt"></i>
-                    </button>
-                  </form>
-                </td>
-              <% } %>
-            </tr>
-          <% } %>
-        </tbody>
-      </table>
+        <!-- ✅ Two-line address (no city) -->
+        <td style="max-width: 200px; white-space: normal;">
+          <div><%= c.getAddress() != null ? c.getAddress() : "-" %></div>
+          <div style="font-size: 0.85em; color: #666;">
+            <%= c.getPostalCode() != null ? c.getPostalCode() : "" %>
+          </div>
+        </td>
+
+        <td><%= c.getRegistrationDate() %></td>
+
+        <% if (isAdmin) { %>
+          <td>
+            <form action="editcustomer.jsp" method="get" style="display:inline;">
+              <input type="hidden" name="account" value="<%= c.getAccountNumber() %>" />
+              <button type="submit" class="btn btn-outline btn-sm">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+            </form>
+
+            <form action="DeleteCustomer" method="post" class="delete-form" style="display:inline;">
+              <input type="hidden" name="account" value="<%= c.getAccountNumber() %>" />
+              <button type="button" class="btn btn-outline btn-sm delete-btn">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </form>
+          </td>
+        <% } %>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
     </div>
   </div>
 </div>

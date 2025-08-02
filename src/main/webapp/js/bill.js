@@ -2,6 +2,19 @@ $(document).ready(function () {
     $('.select2').select2();
     setDiscount();
 
+    // Handle URL Status Alerts (success, failed, invalid)
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get("status");
+
+    if (status === "success") {
+        Swal.fire("Success!", "Bill created successfully!", "success");
+    } else if (status === "failed") {
+        Swal.fire("Error", "Failed to create the bill. Please try again.", "error");
+    } else if (status === "invalid") {
+        Swal.fire("Warning", "Please provide valid bill details.", "warning");
+    }
+
+    // Product Select Change Handler
     $('#productSelect').on('change', function () {
         const selected = $('#productSelect option:selected');
         const price = selected.attr('data-price');
@@ -30,22 +43,22 @@ function calculateSubtotal() {
     const stock = parseInt(selected.attr('data-stock') || "0");
 
     if (!selected.val()) {
-        alert("Please select a product.");
+        Swal.fire("Warning", "Please select a product.", "warning");
         return;
     }
 
     if (isNaN(quantity) || quantity <= 0 || isNaN(unitPrice)) {
-        alert("Please enter a valid quantity.");
+        Swal.fire("Warning", "Please enter a valid quantity.", "warning");
         return;
     }
 
     if (stock === 0) {
-        alert("Sold Out: This product is out of stock.");
+        Swal.fire("Out of Stock", "This product is sold out.", "error");
         return;
     }
 
     if (quantity > stock) {
-        alert("Only " + stock + " unit(s) available in stock.");
+        Swal.fire("Stock Limit", "Only " + stock + " unit(s) available in stock.", "warning");
         return;
     }
 
@@ -66,12 +79,12 @@ function addProduct() {
     const discountPercent = parseFloat(document.getElementById("discountPercent").value);
 
     if (!itemId || isNaN(quantity) || isNaN(unitPrice)) {
-        alert("Please calculate subtotal first.");
+        Swal.fire("Warning", "Please calculate subtotal first.", "warning");
         return;
     }
 
     if (document.getElementById("row_" + itemId)) {
-        alert("This product has already been added.");
+        Swal.fire("Duplicate", "This product has already been added.", "info");
         return;
     }
 
@@ -94,6 +107,7 @@ function addProduct() {
 
     document.getElementById("productTableBody").appendChild(row);
 
+    // Reset form fields
     $('#productSelect').val('').trigger('change');
     $('#quantityInput').val(1);
     $('#unitPriceInput').val('');
@@ -125,16 +139,17 @@ function recalculateGrandTotal() {
 function validateBeforeSubmit() {
     const productCount = document.querySelectorAll('input[name="productId[]"]').length;
     if (productCount === 0) {
-        alert("Please add at least one product before submitting.");
+        Swal.fire("Warning", "Please add at least one product before submitting.", "warning");
         return false;
     }
 
     const grandTotalText = document.getElementById("grandTotal").innerText;
     const finalAmount = parseFloat(grandTotalText.replace("Rs. ", ""));
     if (isNaN(finalAmount) || finalAmount <= 0) {
-        alert("Final Amount cannot be zero.");
+        Swal.fire("Warning", "Final Amount cannot be zero.", "warning");
         return false;
     }
     document.getElementById("finalAmountInput").value = finalAmount.toFixed(2);
     return true;
 }
+

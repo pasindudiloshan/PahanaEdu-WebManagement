@@ -13,21 +13,22 @@ import java.util.List;
 public class ProductDao {
 
     public static boolean addProduct(Product product, InputStream imageStream) {
-        String sql = "INSERT INTO products (item_id, item_name, description, price, quantity, image) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (item_id, item_name, category, description, price, quantity, image) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, product.getItemId());
             ps.setString(2, product.getName());
-            ps.setString(3, product.getDescription());
-            ps.setDouble(4, product.getPrice());
-            ps.setInt(5, product.getQuantity());
+            ps.setString(3, product.getCategory()); // NEW
+            ps.setString(4, product.getDescription());
+            ps.setDouble(5, product.getPrice());
+            ps.setInt(6, product.getQuantity());
 
             if (imageStream != null) {
-                ps.setBlob(6, imageStream);
+                ps.setBlob(7, imageStream);
             } else {
-                ps.setNull(6, java.sql.Types.BLOB);
+                ps.setNull(7, java.sql.Types.BLOB);
             }
 
             int rowsInserted = ps.executeUpdate();
@@ -43,7 +44,7 @@ public class ProductDao {
 
     public static List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT id, item_id, item_name, description, price, quantity, image FROM products ORDER BY id DESC";
+        String sql = "SELECT id, item_id, item_name, category, description, price, quantity, image FROM products ORDER BY id DESC";
 
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -54,6 +55,7 @@ public class ProductDao {
                 p.setId(rs.getInt("id"));
                 p.setItemId(rs.getString("item_id"));
                 p.setName(rs.getString("item_name"));
+                p.setCategory(rs.getString("category")); // NEW
                 p.setDescription(rs.getString("description"));
                 p.setPrice(rs.getDouble("price"));
                 p.setQuantity(rs.getInt("quantity"));
@@ -83,6 +85,7 @@ public class ProductDao {
                 product.setId(rs.getInt("id"));
                 product.setItemId(rs.getString("item_id"));
                 product.setName(rs.getString("item_name"));
+                product.setCategory(rs.getString("category")); // NEW
                 product.setDescription(rs.getString("description"));
                 product.setPrice(rs.getDouble("price"));
                 product.setQuantity(rs.getInt("quantity"));
@@ -98,8 +101,8 @@ public class ProductDao {
 
 
     public static boolean updateProduct(Product product, InputStream imageStream) {
-        String sqlWithImage = "UPDATE products SET item_id = ?, item_name = ?, description = ?, price = ?, quantity = ?, image = ? WHERE id = ?";
-        String sqlWithoutImage = "UPDATE products SET item_id = ?, item_name = ?, description = ?, price = ?, quantity = ? WHERE id = ?";
+        String sqlWithImage = "UPDATE products SET item_id = ?, item_name = ?, category = ?, description = ?, price = ?, quantity = ?, image = ? WHERE id = ?";
+        String sqlWithoutImage = "UPDATE products SET item_id = ?, item_name = ?, category = ?, description = ?, price = ?, quantity = ? WHERE id = ?";
 
         try (Connection conn = DBUtil.getConnection()) {
             PreparedStatement pst;
@@ -107,19 +110,21 @@ public class ProductDao {
                 pst = conn.prepareStatement(sqlWithImage);
                 pst.setString(1, product.getItemId());
                 pst.setString(2, product.getName());
-                pst.setString(3, product.getDescription());
-                pst.setDouble(4, product.getPrice());
-                pst.setInt(5, product.getQuantity());
-                pst.setBlob(6, imageStream);
-                pst.setInt(7, product.getId());
+                pst.setString(3, product.getCategory()); // NEW
+                pst.setString(4, product.getDescription());
+                pst.setDouble(5, product.getPrice());
+                pst.setInt(6, product.getQuantity());
+                pst.setBlob(7, imageStream);
+                pst.setInt(8, product.getId());
             } else {
                 pst = conn.prepareStatement(sqlWithoutImage);
                 pst.setString(1, product.getItemId());
                 pst.setString(2, product.getName());
-                pst.setString(3, product.getDescription());
-                pst.setDouble(4, product.getPrice());
-                pst.setInt(5, product.getQuantity());
-                pst.setInt(6, product.getId());
+                pst.setString(3, product.getCategory()); // NEW
+                pst.setString(4, product.getDescription());
+                pst.setDouble(5, product.getPrice());
+                pst.setInt(6, product.getQuantity());
+                pst.setInt(7, product.getId());
             }
 
             int rows = pst.executeUpdate();
@@ -129,7 +134,6 @@ public class ProductDao {
             return false;
         }
     }
-
 
 
     public static boolean deleteProductById(int id) {
@@ -162,4 +166,3 @@ public class ProductDao {
         return 0;
     }
 }
-

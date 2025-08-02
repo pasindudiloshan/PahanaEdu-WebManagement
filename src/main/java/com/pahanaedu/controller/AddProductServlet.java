@@ -18,10 +18,11 @@ public class AddProductServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // Use exactly the same parameter names as in JSP
+            // Get all parameters including category
             String itemId = request.getParameter("itemid");
             String name = request.getParameter("name");
             String description = request.getParameter("description");
+            String category = request.getParameter("category");  // NEW
             double price = Double.parseDouble(request.getParameter("price"));
             int quantity = Integer.parseInt(request.getParameter("quantity"));
 
@@ -39,6 +40,7 @@ public class AddProductServlet extends HttpServlet {
             product.setItemId(itemId);
             product.setName(name);
             product.setDescription(description);
+            product.setCategory(category);  // NEW
             product.setPrice(price);
             product.setQuantity(quantity);
 
@@ -57,4 +59,3 @@ public class AddProductServlet extends HttpServlet {
         }
     }
 }
-

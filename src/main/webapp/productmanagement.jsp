@@ -56,48 +56,51 @@
 
       <table class="data-table">
         <thead>
-          <tr>
-            <th>Cover</th>
-            <th>Item ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price ($)</th>
-            <th>Quantity</th>
-            <% if (isAdmin) { %>
-              <th>Actions</th>
-            <% } %>
-          </tr>
-        </thead>
-        <tbody>
-          <% for (Product product : products) { %>
-            <tr>
-              <td>
-                <img src="productImage?id=<%= product.getId() %>" 
-                     alt="Cover" 
-                     class="book-cover"
-                     onerror="this.onerror=null;this.src='images/default-book.png';" />
-              </td>
-              <td><%= product.getItemId() %></td>
-              <td><%= product.getName() %></td>
-              <td><%= product.getDescription() %></td>
-              <td><%= String.format("%.2f", product.getPrice()) %></td>
-              <td><%= product.getQuantity() %></td>
-              <% if (isAdmin) { %>
-              <td>
-                <a href="editproduct.jsp?id=<%= product.getId() %>" class="btn btn-outline btn-sm">
-                  <i class="fas fa-edit"></i> Edit
-                </a>
-                <form action="deleteProduct" method="post" class="delete-form" style="display:inline;">
-                  <input type="hidden" name="id" value="<%= product.getId() %>" />
-                  <button type="button" class="btn btn-outline btn-sm delete-btn">
-                    <i class="fas fa-trash-alt"></i>
-                  </button>
-                </form>
-              </td>
-              <% } %>
-            </tr>
-          <% } %>
-        </tbody>
+  <tr>
+    <th>Cover</th>
+    <th>Item ID</th>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Category</th> <!-- Added -->
+    <th>Price ($)</th>
+    <th>Quantity</th>
+    <% if (isAdmin) { %>
+      <th>Actions</th>
+    <% } %>
+  </tr>
+</thead>
+<tbody>
+  <% for (Product product : products) { %>
+    <tr>
+      <td>
+        <img src="productImage?id=<%= product.getId() %>" 
+             alt="Cover" 
+             class="book-cover"
+             onerror="this.onerror=null;this.src='images/default-book.png';" />
+      </td>
+      <td><%= product.getItemId() %></td>
+      <td><%= product.getName() %></td>
+      <td><%= product.getDescription() %></td>
+      <td><%= product.getCategory() %></td> <!-- Added -->
+      <td><%= String.format("%.2f", product.getPrice()) %></td>
+      <td><%= product.getQuantity() %></td>
+      <% if (isAdmin) { %>
+      <td>
+        <a href="editproduct.jsp?id=<%= product.getId() %>" class="btn btn-outline btn-sm">
+          <i class="fas fa-edit"></i> Edit
+        </a>
+        <form action="deleteProduct" method="post" class="delete-form" style="display:inline;">
+          <input type="hidden" name="id" value="<%= product.getId() %>" />
+          <button type="button" class="btn btn-outline btn-sm delete-btn">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </form>
+      </td>
+      <% } %>
+    </tr>
+  <% } %>
+</tbody>
+
       </table>
     </div>
   </div>

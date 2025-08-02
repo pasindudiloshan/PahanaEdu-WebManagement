@@ -89,13 +89,29 @@
           </div>
 
           <div class="form-row-two">
-            <div class="form-group" style="flex: 1;">
-              <label for="description">Description</label>
-              <textarea id="description" name="description" class="form-input" rows="4" placeholder="Enter product description"></textarea>
+            <div class="form-group">
+              <label for="category">Category <span style="color:red">*</span></label>
+              <select id="category" name="category" class="form-input" required>
+                <option value="" disabled selected>Select category</option>
+                <option value="Novels">Novels</option>
+                <option value="Stationery">Stationery</option>
+                <option value="Textbooks">Textbooks</option>
+                <option value="Magazines">Magazines</option>
+                <option value="Comics">Comics</option>
+                <option value="Reference">Reference</option>
+                <option value="Others">Others</option>
+              </select>
             </div>
             <div class="form-group">
               <label for="photo">Product Image <span style="color:red">*</span></label>
               <input type="file" id="photo" name="photo" class="form-input" accept="image/*" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="width: 100%;">
+              <label for="description">Description</label>
+              <textarea id="description" name="description" class="form-input" rows="4" placeholder="Enter product description"></textarea>
             </div>
           </div>
 

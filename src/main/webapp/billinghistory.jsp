@@ -123,50 +123,51 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                <%
-                    if (invalidDate) {
-                %>
-                    <tr>
-                        <td colspan="9" style="text-align:center; color:red;">Cannot filter by a future date.</td>
-                    </tr>
-                <%
-                    } else if (bills == null || bills.isEmpty()) {
-                %>
-                    <tr>
-                        <td colspan="9" style="text-align:center;">No records found.</td>
-                    </tr>
-                <%
-                    } else {
-                        for (Bill b : bills) {
-                            Customer cust = CustomerDao.getCustomerByAccount(b.getAccountNumber());
-                            int totalQty = quantities.getOrDefault(b.getId(), 0);
-                %>
-                    <tr>
-                        <td><%= b.getId() %></td>
-                        <td>
-                            <img src="customerImage?account=<%= b.getAccountNumber() %>"
-                                 alt="Customer Photo"
-                                 style="width:40px; height:40px; border-radius:50%; object-fit:cover;"
-                                 onerror="this.onerror=null;this.src='images/default-user.png';">
-                        </td>
-                        <td><%= (cust != null) ? cust.getFullName() : "Unknown" %></td>
-                        <td><%= b.getAccountNumber() %></td>
-                        <td><%= (b.getBillingDate() != null) ? sdf.format(b.getBillingDate()) : "" %></td>
-                        <td><%= b.getPaymentMethod() %></td>
-                        <td><%= totalQty %></td>
-                        <td>Rs. <%= String.format("%.2f", b.getFinalAmount()) %></td>
-                        <td>
-                            <a href="viewbill.jsp?id=<%= b.getId() %>" class="btn btn-sm btn-outline">
-                                <i class="fas fa-eye"></i> View
-                            </a>
-                        </td>
-                    </tr>
-                <%
-                        }
-                    }
-                %>
-                </tbody>
+               <tbody>
+<%
+    if (invalidDate) {
+%>
+    <tr>
+        <td colspan="9" style="text-align:center; color:red;">Cannot filter by a future date.</td>
+    </tr>
+<%
+    } else if (bills == null || bills.isEmpty()) {
+%>
+    <tr>
+        <td colspan="9" style="text-align:center;">No records found.</td>
+    </tr>
+<%
+    } else {
+        for (Bill b : bills) {
+            Customer cust = CustomerDao.getCustomerByAccount(b.getAccountNumber());
+            int totalQty = quantities.getOrDefault(b.getId(), 0);
+%>
+    <tr>
+        <td>PEB-ORD-<%= String.format("%03d", b.getId()) %></td>
+        <td>
+            <img src="customerImage?account=<%= b.getAccountNumber() %>"
+                 alt="Customer Photo"
+                 style="width:40px; height:40px; border-radius:50%; object-fit:cover;"
+                 onerror="this.onerror=null;this.src='images/default-user.png';">
+        </td>
+        <td><%= (cust != null) ? cust.getFullName() : "Unknown" %></td>
+        <td><%= b.getAccountNumber() %></td>
+        <td><%= (b.getBillingDate() != null) ? sdf.format(b.getBillingDate()) : "" %></td>
+        <td><%= b.getPaymentMethod() %></td>
+        <td><%= totalQty %></td>
+        <td>Rs. <%= String.format("%.2f", b.getFinalAmount()) %></td>
+        <td>
+            <a href="viewbill.jsp?id=<%= b.getId() %>" class="btn btn-sm btn-outline">
+                <i class="fas fa-eye"></i> View
+            </a>
+        </td>
+    </tr>
+<%
+        }
+    }
+%>
+</tbody>
+
             </table>
         </div>
     </div>

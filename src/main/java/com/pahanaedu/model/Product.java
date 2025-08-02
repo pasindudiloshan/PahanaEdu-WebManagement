@@ -8,6 +8,8 @@ public class Product {
     private double price;
     private int quantity;
     private byte[] image;
+    private String category;
+
 
     public Product() {}
 
@@ -60,5 +62,13 @@ public class Product {
     }
     public void setImage(byte[] image) {
         this.image = image;
+    }
+    
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

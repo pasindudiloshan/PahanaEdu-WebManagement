@@ -1,6 +1,20 @@
-/* Main Content */
+@charset "UTF-8";
+
+/* Layout Grid */
+.container {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  grid-template-rows: 70px 1fr;
+  height: 100vh;
+  background: #f4f6f8;
+  overflow: hidden;
+}
+
 .main-content {
+  grid-column: 2;
+  grid-row: 2;
   padding: 30px 40px;
+  overflow-y: auto;
 }
 
 /* Page Title */
@@ -22,59 +36,11 @@
   color: #3a0ca3;
   text-decoration: none;
   font-weight: 600;
-  transition: 0.3s;
+  transition: background-color 0.3s;
 }
 .page-title .action-buttons a:hover {
   background-color: #3a0ca3;
   color: white;
-}
-
-/* Card Layout */
-.table-card {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-}
-
-/* Card Title */
-.card-title h3 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #3a0ca3;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-/* Form Groups */
-.form-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-.form-group {
-  flex: 1 1 200px;
-  display: flex;
-  flex-direction: column;
-}
-.form-group label {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 6px;
-}
-.form-input, .select2-container .select2-selection--single {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  background-color: #f9f9f9;
-}
-.form-input:focus, .select2-container--default .select2-selection--single:focus {
-  outline: none;
-  border-color: #3a0ca3;
-  box-shadow: 0 0 0 2px rgba(58,12,163,0.1);
 }
 
 /* Buttons */
@@ -117,31 +83,158 @@
 .btn-sm {
   padding: 6px 12px;
   font-size: 13px;
+  border-radius: 6px;
 }
 
-/* Product Table */
+/* Cards */
+.table-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  margin-bottom: 40px;
+}
+
+.card-title {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  color: #3a0ca3;
+  font-weight: 700;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-title i {
+  font-size: 22px;
+  color: #7209b7;
+}
+
+/* Forms */
+form {
+  width: 100%;
+}
+.form-row, .form-row-two {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.form-group {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+}
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+  font-size: 14px;
+}
+.form-input, .select2-container .select2-selection--single {
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 1.5px solid #ddd;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  color: #333;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+.form-input:focus, .select2-container--default .select2-selection--single:focus {
+  outline: none;
+  border-color: #3a0ca3;
+  box-shadow: 0 0 8px rgba(58, 12, 163, 0.25);
+}
+
+/* Placeholder Styling */
+::placeholder {
+  color: #999;
+  opacity: 1;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #999;
+}
+input:focus::placeholder,
+textarea:focus::placeholder {
+  color: #ccc;
+}
+
+/* Tables */
 .data-table {
   width: 100%;
   border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 15px -5px rgba(58, 12, 163, 0.2);
   margin-top: 20px;
   font-size: 14px;
 }
-.data-table thead th {
+.data-table th {
   background-color: #3a0ca3;
   color: white;
-  padding: 12px;
+  padding: 12px 18px;
   text-align: left;
-  border-radius: 6px 6px 0 0;
+  font-weight: 600;
 }
-.data-table tbody td {
+.data-table td {
   padding: 10px 14px;
   border-bottom: 1px solid #e0e0e0;
 }
 .data-table tbody tr:hover {
-  background-color: #f9f9f9;
+  background-color: #f1f1f1;
+  cursor: default;
 }
 
-/* Grand Total */
+/* Status Labels */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  user-select: none;
+}
+.status.active {
+  background-color: #4cc9f0;
+  color: #023047;
+}
+.status.pending {
+  background-color: #f8961e;
+  color: white;
+}
+
+/* Alerts */
+.custom-alert {
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border-left: 5px solid green;
+  background-color: #e9fbe9;
+  color: #2b572b;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 15px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.custom-alert i {
+  font-size: 18px;
+  color: green;
+}
+
+/* Utility */
 .text-end {
   text-align: right;
 }
@@ -149,8 +242,6 @@
   font-size: 18px;
   color: #2c2c2c;
 }
-
-/* Button Group */
 .button-group {
   display: flex;
   align-items: center;
@@ -158,9 +249,38 @@
   gap: 10px;
 }
 
-/* Responsive Design */
+/* Select2 Dropdown Highlight on Hover/Select */
+.select2-results__option--highlighted {
+  background-color: #4caf50 !important;
+  color: white !important;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Native select dropdown item highlight */
+select:focus option:checked {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* Fix Select2 Selected Item */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: #333;
+  padding-left: 8px;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .form-row {
+  .form-row, .form-row-two {
     flex-direction: column;
   }
+  .container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+  }
+  .main-content {
+    grid-column: 1;
+    grid-row: 3;
+    padding: 20px;
+  }
 }
+

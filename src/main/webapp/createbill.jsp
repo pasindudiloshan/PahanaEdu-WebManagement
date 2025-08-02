@@ -14,11 +14,6 @@
         response.sendRedirect("login.jsp");
         return;
     }
-    if (!"Admin".equalsIgnoreCase(loggedUser.getRole())) {
-        response.sendRedirect("index.jsp");
-        return;
-    }
-
     List<Customer> customers = CustomerDao.getAllCustomers();
     List<Product> products = ProductDao.getAllProducts();
 %>
@@ -34,12 +29,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
   <link rel="stylesheet" href="css/sidebar-header.css">
-  <link rel="stylesheet" href="css/user-management.css">
   <link rel="stylesheet" href="css/bill.css">
+  
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
   <script src="js/bill.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -118,7 +114,7 @@
 
           <div class="form-group button-group">
             <label>&nbsp;</label>
-            <button type="button" class="btn btn-outline btn-sm" onclick="calculateSubtotal()">Calculate</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="calculateSubtotal()">Apply</button>
           </div>
         </div>
 

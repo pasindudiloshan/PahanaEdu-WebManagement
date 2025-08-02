@@ -2,6 +2,7 @@ package com.pahanaedu.dao;
 
 import com.pahanaedu.model.Bill;
 import com.pahanaedu.model.BillItem;
+import com.pahanaedu.util.DBUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -204,7 +205,55 @@ public class BillDao {
         }
     }
 
+    public double getTotalSales() throws SQLException {
+        String sql = "SELECT SUM(final_amount) AS totalSales FROM bills";
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getDouble("totalSales");
+            }
+        }
+        return 0.0;
+    }
+    
+    public int getTotalOrderCount() {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM bills";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
 
+    public List<Bill> getRecentBills(int limit) {
+        List<Bill> recentBills = new ArrayList<>();
+        String sql = "SELECT * FROM bills ORDER BY billing_date DESC LIMIT ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Bill bill = new Bill();
+                    bill.setId(rs.getInt("id"));
+                    bill.setAccountNumber(rs.getString("account_number"));
+                    bill.setBillingDate(rs.getDate("billing_date"));
+                    bill.setFinalAmount(rs.getDouble("final_amount"));
+                    bill.setPaymentMethod(rs.getString("payment_method"));
+                    // Set other fields if needed
+                    recentBills.add(bill);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return recentBills;
+    }
 
 
 

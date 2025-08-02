@@ -189,6 +189,12 @@
   color: white;
 }
 
+.card-icon.orange {
+    background-color: #ff922b;
+    color: white;
+}
+
+
 /* Responsive */
 @media (max-width: 768px) {
   .container {
