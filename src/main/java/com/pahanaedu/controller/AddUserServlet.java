@@ -2,6 +2,8 @@ package com.pahanaedu.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -17,6 +19,10 @@ import org.mindrot.jbcrypt.BCrypt;
 public class AddUserServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    // Allowed roles list - adjust as needed
+    private static final List<String> ALLOWED_ROLES = Arrays.asList("Admin", "Manager", "Cashier");
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
@@ -36,7 +42,7 @@ public class AddUserServlet extends HttpServlet {
         String uempid = request.getParameter("uempid");
         String name = request.getParameter("name");
         String email = request.getParameter("email");
-        String plainPassword = request.getParameter("pass"); // Original password
+        String plainPassword = request.getParameter("pass");
         String contact = request.getParameter("contact");
         String role = request.getParameter("role");
 
@@ -47,18 +53,27 @@ public class AddUserServlet extends HttpServlet {
             inputStream = filePart.getInputStream();
         }
 
-        // Validation
+        // Validate required fields
         if (uempid == null || uempid.trim().isEmpty() ||
-            name == null || email == null || plainPassword == null || contact == null || role == null ||
-            name.trim().isEmpty() || email.trim().isEmpty() || plainPassword.trim().isEmpty() ||
-            contact.trim().isEmpty() || role.trim().isEmpty()) {
+            name == null || name.trim().isEmpty() ||
+            email == null || email.trim().isEmpty() ||
+            plainPassword == null || plainPassword.trim().isEmpty() ||
+            contact == null || contact.trim().isEmpty() ||
+            role == null || role.trim().isEmpty()) {
 
             request.setAttribute("status", "failed");
             request.getRequestDispatcher("adduser.jsp").forward(request, response);
             return;
         }
 
-        // Duplicate checks
+        // Validate role against allowed roles
+        if (!ALLOWED_ROLES.contains(role)) {
+            request.setAttribute("status", "failed");
+            request.getRequestDispatcher("adduser.jsp").forward(request, response);
+            return;
+        }
+
+        // Check for duplicates
         if (UserDao.isEmailExists(email)) {
             request.setAttribute("status", "email_exists");
             request.getRequestDispatcher("adduser.jsp").forward(request, response);
@@ -71,10 +86,10 @@ public class AddUserServlet extends HttpServlet {
             return;
         }
 
-        // ✅ HASH the password
+        // Hash password
         String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
 
-        // Create and save user with hashed password
+        // Create user and insert
         User newUser = new User(uempid, name, email, hashedPassword, contact, role, inputStream);
         boolean success = UserDao.addUser(newUser);
 

@@ -12,7 +12,7 @@ public class User {
     private String email;            // Email (unique)
     private String password;         // Password (should be hashed)
     private String mobile;           // Mobile number
-    private String role;             // Role (admin, employee, etc.)
+    private String role;             // Role (admin, manager, etc.)
     private InputStream photo;       // Photo as InputStream
 
     public User() {

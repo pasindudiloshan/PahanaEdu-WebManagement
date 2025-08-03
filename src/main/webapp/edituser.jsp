@@ -93,7 +93,8 @@
               <label for="role">Role <span style="color:red">*</span></label>
               <select name="role" id="role" class="form-input" required>
                 <option value="Admin" <%= "Admin".equalsIgnoreCase(role) ? "selected" : "" %>>Admin</option>
-                <option value="Employee" <%= "Employee".equalsIgnoreCase(role) ? "selected" : "" %>>Employee</option>
+                <option value="Manager" <%= "Manager".equalsIgnoreCase(role) ? "selected" : "" %>>Manager</option>
+                <option value="Cashier" <%= "Cashier".equalsIgnoreCase(role) ? "selected" : "" %>>Cashier</option>
               </select>
             </div>
             <div class="form-group">

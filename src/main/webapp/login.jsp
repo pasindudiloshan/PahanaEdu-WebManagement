@@ -27,7 +27,7 @@
       <div class="signin-content">
         <div class="signin-image">
           <figure>
-            <img src="images/signin-image.jpg" alt="Sign in image" />
+            <img src="images/loginlogo.png" alt="Sign in image" />
           </figure>
         </div>
 
@@ -47,22 +47,33 @@
                 autocomplete="username"
               />
             </div>
+
             <div class="form-group">
               <label for="password">
                 <i class="zmdi zmdi-lock"></i>
               </label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                placeholder="Password"
-                required
-                autocomplete="current-password"
-              />
+              <div class="password-wrapper">
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="Password"
+                  required
+                  autocomplete="current-password"
+                />
+                <i class="zmdi zmdi-eye toggle-password" id="togglePassword"></i>
+              </div>
             </div>
+
+            <div class="form-group remember-me">
+              <input type="checkbox" name="remember" id="remember" />
+              <label for="remember"> Remember Me</label>
+            </div>
+
             <div class="form-group">
-                <a href="forgotPassword.jsp" >Forgot Password</a>
+              <a href="forgotPassword.jsp">Forgot Password?</a>
             </div>
+
             <div class="form-group form-button">
               <input type="submit" name="signin" id="signin" class="form-submit" value="Log in" />
             </div>
@@ -84,7 +95,6 @@
 
 <!-- JS -->
 <script src="vendor/jquery/jquery.min.js"></script>
-<script src="js/main.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <script type="text/javascript">
@@ -92,8 +102,18 @@
   if (status === "failed") {
     swal("Sorry", "Wrong Username or Password", "error");
   }
+=
+  $('#togglePassword').on('click', function() {
+    const passwordField = $('#password');
+    const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
+    passwordField.attr('type', type);
+    $(this).toggleClass('zmdi-eye zmdi-eye-off');
+  });
 </script>
 
 </body>
-<!-- Template by Colorlib (https://colorlib.com) -->
+
 </html>
+
+
+

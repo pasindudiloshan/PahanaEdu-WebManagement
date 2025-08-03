@@ -1,4 +1,4 @@
-<%@ page import="java.util.List" %>
+<%@ page import="java.util.List, java.util.ArrayList" %>
 <%@ page import="com.pahanaedu.model.User" %>
 <%@ page import="com.pahanaedu.dao.UserDao" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -10,9 +10,30 @@
         return;
     }
     String role = loggedUser.getRole();
+    boolean isAdminOrManager = "Admin".equalsIgnoreCase(role) || "Manager".equalsIgnoreCase(role);
+
+    String filterEmpId = request.getParameter("uempid");
+    String filterRole = request.getParameter("role");
 
     List<User> users = UserDao.getAllUsers();
-    boolean isAdmin = "Admin".equalsIgnoreCase(role);
+
+    if ((filterEmpId != null && !filterEmpId.trim().isEmpty() && !"PEB-EMP-".equals(filterEmpId.trim())) ||
+        (filterRole != null && !filterRole.trim().isEmpty())) {
+
+        List<User> filtered = new ArrayList<>();
+        for (User u : users) {
+            boolean empMatch = (filterEmpId == null || filterEmpId.trim().isEmpty() || "PEB-EMP-".equals(filterEmpId.trim())) ||
+                               (u.getUempid() != null && u.getUempid().toLowerCase().contains(filterEmpId.trim().toLowerCase()));
+
+            boolean roleMatch = (filterRole == null || filterRole.trim().isEmpty()) ||
+                                (u.getRole() != null && u.getRole().equalsIgnoreCase(filterRole.trim()));
+
+            if (empMatch && roleMatch) {
+                filtered.add(u);
+            }
+        }
+        users = filtered;
+    }
 %>
 
 <!DOCTYPE html>
@@ -37,13 +58,36 @@
     <div class="page-title">
       <div class="title">User Management</div>
       <div class="action-buttons">
-        <% if (isAdmin) { %>
+        <% if (isAdminOrManager) { %>
           <a href="adduser.jsp" class="btn btn-primary">
             <i class="fas fa-user-plus"></i> Add User
           </a>
         <% } %>
       </div>
     </div>
+
+    <!-- Filter Form -->
+    <form method="get" class="form-row-two" style="margin-bottom: 20px;">
+      <div class="form-group">
+        <label for="uempid">Filter by Employee ID:</label>
+        <input type="text" name="uempid" id="empInput" class="form-input"
+               value="<%= (filterEmpId != null) ? filterEmpId : "PEB-EMP-" %>"
+               placeholder="PEB-EMP-XXX">
+      </div>
+      <div class="form-group">
+        <label for="role">Filter by Role:</label>
+        <select name="role" id="role" class="form-input">
+          <option value="">All Roles</option>
+          <option value="Admin" <%= "Admin".equalsIgnoreCase(filterRole) ? "selected" : "" %>>Admin</option>
+          <option value="Manager" <%= "Manager".equalsIgnoreCase(filterRole) ? "selected" : "" %>>Manager</option>
+          <option value="Cashier" <%= "Cashier".equalsIgnoreCase(filterRole) ? "selected" : "" %>>Cashier</option>
+        </select>
+      </div>
+      <div style="display: flex; align-items: flex-end; gap: 10px;">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
+        <a href="usermanagement.jsp" class="btn btn-outline"><i class="fas fa-times"></i> Clear</a>
+      </div>
+    </form>
 
     <div class="table-card">
       <div class="card-title">
@@ -60,13 +104,19 @@
             <th>Phone</th>
             <th>Role</th>
             <th>Status</th>
-            <% if (isAdmin) { %>
+            <% if (isAdminOrManager) { %>
               <th>Actions</th>
             <% } %>
           </tr>
         </thead>
         <tbody>
-          <% for (User user : users) { %>
+          <% if (users == null || users.isEmpty()) { %>
+            <tr>
+              <td colspan="<%= isAdminOrManager ? 8 : 7 %>" style="text-align:center; color:red;">No records found.</td>
+            </tr>
+          <% } else {
+               for (User user : users) {
+          %>
             <tr>
               <td>
                 <img src="userImage?email=<%= user.getEmail() %>"
@@ -84,7 +134,7 @@
                   <i class="fas fa-check-circle"></i> Active
                 </span>
               </td>
-              <% if (isAdmin) { %>
+              <% if (isAdminOrManager) { %>
                 <td>
                   <form action="edituser.jsp" method="get" style="display:inline;">
                     <input type="hidden" name="email" value="<%= user.getEmail() %>" />
@@ -92,7 +142,6 @@
                       <i class="fas fa-edit"></i> Edit
                     </button>
                   </form>
-
                   <form action="deleteUser" method="post" class="delete-form" style="display:inline;">
                     <input type="hidden" name="uempid" value="<%= user.getUempid() %>" />
                     <button type="button" class="btn btn-outline btn-sm delete-btn">
@@ -102,7 +151,7 @@
                 </td>
               <% } %>
             </tr>
-          <% } %>
+          <% } } %>
         </tbody>
       </table>
     </div>
@@ -113,6 +162,34 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+  // Protect PEB-EMP- prefix
+  const empPrefix = "PEB-EMP-";
+  const empInput = document.getElementById("empInput");
+
+  window.addEventListener("DOMContentLoaded", () => {
+    if (!empInput.value.startsWith(empPrefix)) {
+      empInput.value = empPrefix;
+      empInput.setSelectionRange(empPrefix.length, empPrefix.length);
+    }
+  });
+
+  empInput.addEventListener("keydown", (e) => {
+    const cursor = empInput.selectionStart;
+    if ((e.key === "Backspace" || e.key === "ArrowLeft") && cursor <= empPrefix.length) {
+      e.preventDefault();
+    }
+    if (cursor < empPrefix.length && e.key.length === 1) {
+      e.preventDefault();
+    }
+  });
+
+  empInput.addEventListener("input", () => {
+    if (!empInput.value.startsWith(empPrefix)) {
+      const digits = empInput.value.replace(/[^0-9]/g, "").slice(0, 3);
+      empInput.value = empPrefix + digits;
+    }
+  });
+
   const urlParams = new URLSearchParams(window.location.search);
   const status = urlParams.get("status");
 

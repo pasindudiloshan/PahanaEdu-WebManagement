@@ -12,7 +12,7 @@
         return;
     }
 
-    String status = (String) request.getAttribute("status");  // ✅ fixed here
+    String status = (String) request.getAttribute("status");
 %>
 
 <!DOCTYPE html>
@@ -32,7 +32,7 @@
 </head>
 <body>
 
-<input type="hidden" id="status" value="<%= status != null ? status : "" %>" /> <!-- ✅ updated -->
+<input type="hidden" id="status" value="<%= status != null ? status : "" %>" />
 
 <div class="container">
   <%@ include file="sidebar.jsp" %>
@@ -97,7 +97,8 @@
               <select name="role" id="role" class="form-input" required>
                 <option value="">Select Role</option>
                 <option value="Admin">Admin</option>
-                <option value="Employee">Employee</option>
+                <option value="Manager">Manager</option>
+                <option value="Cashier">Cashier</option>
               </select>
             </div>
           </div>
