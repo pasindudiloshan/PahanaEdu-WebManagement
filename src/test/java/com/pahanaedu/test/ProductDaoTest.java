@@ -20,7 +20,7 @@ public class ProductDaoTest {
     public void setup() {
         // Prepare a test product
         testProduct = new Product();
-        testProduct.setItemId("TEST-ITEM-001");
+        testProduct.setItemId("PEB-ITEM-099");
         testProduct.setName("JUnit Test Product");
         testProduct.setCategory("Test Category");
         testProduct.setDescription("Description for JUnit test product");
@@ -92,7 +92,7 @@ public class ProductDaoTest {
     public void testDeleteProductById() {
         // Create a temporary product to delete
         Product tempProduct = new Product();
-        tempProduct.setItemId("TEMP-ITEM-001");
+        tempProduct.setItemId("PBE-ITEM-099");
         tempProduct.setName("Temp Product");
         tempProduct.setCategory("Temp Category");
         tempProduct.setDescription("Temporary product for delete test");

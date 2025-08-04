@@ -46,10 +46,12 @@ com.pahanaedu.model.User user = null;
     </div>
 
     <!-- Logout button -->
-    <form action="Logout" method="get" class="logout-form">
-      <button type="submit" class="logout-button">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </button>
-    </form>
+    <div class="logout-wrapper">
+      <form action="Logout" method="get" class="logout-form">
+        <button type="submit" class="logout-button">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </form>
+    </div>
   </div>
 </div>

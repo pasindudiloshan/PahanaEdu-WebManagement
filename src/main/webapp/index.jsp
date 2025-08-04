@@ -1,14 +1,46 @@
+<%@ page import="com.pahanaedu.dao.CustomerDao" %> 
 <%@ page import="com.pahanaedu.dao.UserDao" %>
-<%
-  if (session.getAttribute("user") == null) {
-      response.sendRedirect("login.jsp");
-      return; // Prevent further processing if not logged in
-  }
-
-  // Get total user count dynamically
-  int totalUsers = UserDao.getUserCount();
-%>
+<%@ page import="com.pahanaedu.dao.ProductDao" %>
+<%@ page import="com.pahanaedu.dao.BillDao" %>
+<%@ page import="java.sql.Connection" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.pahanaedu.model.Bill, com.pahanaedu.model.Customer" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="com.pahanaedu.util.DBUtil" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<%
+    if (session.getAttribute("user") == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+
+    int totalCustomers = CustomerDao.getCustomerCount(); 
+    int totalUsers = UserDao.getUserCount();
+    int totalProducts = ProductDao.getProductCount();
+
+    Connection conn = null;
+    BillDao billDao = null;
+    double totalSales = 0.0;
+    double totalRevenue = 0.0;
+    int totalOrders = 0;
+    List<Bill> recentBills = null;
+    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+
+    try {
+        conn = DBUtil.getConnection();
+        billDao = new BillDao(conn);
+        totalSales = billDao.getTotalSales();
+        totalRevenue = totalSales * 0.15;
+        totalOrders = billDao.getTotalOrderCount();
+        recentBills = billDao.getRecentBills(5);
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        if (conn != null) try { conn.close(); } catch(Exception e) { e.printStackTrace(); }
+    }
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,156 +48,173 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin Dashboard</title>
 
+  <link rel="icon" href="<%= request.getContextPath() %>/images/favicon.png" type="image/x-icon" />
+
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-  <link rel="icon" type="image/x-icon" href="images/favicon.png"> 
-  <!-- Your custom CSS -->
-  <link rel="stylesheet" href="css/dashboard.css" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/sidebar-header.css" />
+  <link rel="stylesheet" href="css/index.css" />
 </head>
 <body>
-  <div class="container">
 
-    <%@ include file="sidebar.jsp" %>
-    <%@ include file="header.jsp" %>
+<div class="container">
+  <%@ include file="sidebar.jsp" %>
+  <%@ include file="header.jsp" %>
 
-
-      <!-- Stats Cards -->
-<div class="stats-cards">
-  <!-- Total Users (Dynamic) -->
-  <div class="stat-card">
-    <div class="card-header">
-      <div>
-        <div class="card-value"><%= totalUsers %></div>
-        <div class="card-label">Total Users</div>
-      </div>
-      <div class="card-icon purple">
-        <i class="fas fa-users"></i>
-      </div>
+  <div class="main-content">
+    
+    <div class="page-title">
+      <div class="title">Dashboard</div>
     </div>
-    <div class="card-change positive">
-      <i class="fas fa-arrow-up"></i>
-      <span>12.5% from last month</span>
+
+   <section class="stats-cards">
+   
+<div class="stat-card">
+  <div class="card-header">
+    <div>
+      <div class="card-value">Rs. <%= String.format("%.2f", totalRevenue) %></div>
+      <div class="card-label">Total Revenue</div>
+    </div>
+    <div class="card-icon green">
+      <i class="fas fa-coins"></i>
     </div>
   </div>
-
-  <!-- Static Card 1: Active Sessions -->
-  <div class="stat-card">
-    <div class="card-header">
-      <div>
-        <div class="card-value">23</div>
-        <div class="card-label">Active Sessions</div>
-      </div>
-      <div class="card-icon green">
-        <i class="fas fa-chart-line"></i>
-      </div>
-    </div>
-    <div class="card-change negative">
-      <i class="fas fa-arrow-down"></i>
-      <span>4.1% from last week</span>
-    </div>
-  </div>
-
-  <!-- Static Card 2: New Signups -->
-  <div class="stat-card">
-    <div class="card-header">
-      <div>
-        <div class="card-value">8</div>
-        <div class="card-label">New Signups</div>
-      </div>
-      <div class="card-icon blue">
-        <i class="fas fa-user-plus"></i>
-      </div>
-    </div>
-    <div class="card-change positive">
-      <i class="fas fa-arrow-up"></i>
-      <span>22.8% increase</span>
-    </div>
-  </div>
-
-  <!-- Static Card 3: Monthly Visits -->
-  <div class="stat-card">
-    <div class="card-header">
-      <div>
-        <div class="card-value">1,024</div>
-        <div class="card-label">Monthly Visits</div>
-      </div>
-      <div class="card-icon orange">
-        <i class="fas fa-eye"></i>
-      </div>
-    </div>
-    <div class="card-change positive">
-      <i class="fas fa-arrow-up"></i>
-      <span>5.6% growth</span>
-    </div>
+  <div class="card-change positive">
+    <i class="fas fa-arrow-up"></i>
+    <span>10.0% from last month</span>
   </div>
 </div>
 
-      <!-- Recent Orders Table (unchanged) -->
-      <div class="table-card">
-        <div class="card-title">
-          <h3><i class="fas fa-shopping-bag"></i> Recent Orders</h3>
-          <button class="btn btn-outline btn-sm">
-            <i class="fas fa-eye"></i> View All
-          </button>
-        </div>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Customer</th>
-              <th>Date</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>#ORD-001</td>
-              <td>John Smith</td>
-              <td>15 Mar 2025</td>
-              <td>$125.00</td>
-              <td><span class="status active"><i class="fas fa-check-circle"></i> Completed</span></td>
-              <td><button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i> View</button></td>
-            </tr>
-            <tr>
-              <td>#ORD-002</td>
-              <td>Emma Johnson</td>
-              <td>14 Mar 2025</td>
-              <td>$245.99</td>
-              <td><span class="status pending"><i class="fas fa-clock"></i> Pending</span></td>
-              <td><button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i> View</button></td>
-            </tr>
-            <tr>
-              <td>#ORD-003</td>
-              <td>Michael Brown</td>
-              <td>13 Mar 2025</td>
-              <td>$79.50</td>
-              <td><span class="status active"><i class="fas fa-check-circle"></i> Completed</span></td>
-              <td><button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i> View</button></td>
-            </tr>
-            <tr>
-              <td>#ORD-004</td>
-              <td>Sarah Davis</td>
-              <td>12 Mar 2025</td>
-              <td>$350.00</td>
-              <td><span class="status cancelled"><i class="fas fa-times-circle"></i> Cancelled</span></td>
-              <td><button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i> View</button></td>
-            </tr>
-            <tr>
-              <td>#ORD-005</td>
-              <td>David Wilson</td>
-              <td>11 Mar 2025</td>
-              <td>$185.25</td>
-              <td><span class="status active"><i class="fas fa-check-circle"></i> Completed</span></td>
-              <td><button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i> View</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
+<div class="stat-card">
+  <div class="card-header">
+    <div>
+      <div class="card-value"><%= totalOrders %></div>
+      <div class="card-label">Total Orders</div>
+    </div>
+    <div class="card-icon yellow">
+      <i class="fas fa-shopping-cart"></i>
     </div>
   </div>
+  <div class="card-change positive">
+    <i class="fas fa-arrow-up"></i>
+    <span>7.3% from last month</span>
+  </div>
+</div>
+
+<div class="stat-card">
+  <div class="card-header">
+    <div>
+      <div class="card-value"><%= totalCustomers %></div>
+      <div class="card-label">Total Customers</div>
+    </div>
+    <div class="card-icon blue">
+      <i class="fas fa-users"></i>
+    </div>
+  </div>
+  <div class="card-change positive">
+    <i class="fas fa-arrow-up"></i>
+    <span>9.8% from last month</span>
+  </div>
+</div>
+  
+<div class="stat-card">
+  <div class="card-header">
+    <div>
+      <div class="card-value"><%= totalProducts %></div>
+      <div class="card-label">Total Products</div>
+    </div>
+    <div class="card-icon green">
+      <i class="fas fa-book"></i>
+    </div>
+  </div>
+  <div class="card-change positive">
+    <i class="fas fa-arrow-up"></i>
+    <span>8.9% from last month</span>
+  </div>
+</div>
+  
+<div class="stat-card">
+  <div class="card-header">
+    <div>
+      <div class="card-value"><%= totalUsers %></div>
+      <div class="card-label">Total Users</div>
+    </div>
+    <div class="card-icon purple">
+      <i class="fas fa-users-cog"></i> 
+    </div>
+  </div>
+  <div class="card-change positive">
+    <i class="fas fa-arrow-up"></i>
+    <span>12.5% from last month</span>
+  </div>
+</div>
+
+</section>
+
+<!-- Recent Orders -->
+<section class="table-card">
+  <div class="card-title">
+    <h3><i class="fas fa-shopping-bag"></i> Recent Orders</h3>
+    <button class="btn btn-outline btn-sm" onclick="location.href='billinghistory.jsp'">
+      <i class="fas fa-eye"></i> View All
+    </button>
+  </div>
+  
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Profile Picture</th>   
+      <th>Account Number</th>   
+      <th>Customer</th>
+      <th>Date</th>
+      <th>Purchase Amount</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  <%
+    if (recentBills != null && !recentBills.isEmpty()) {
+        for (Bill b : recentBills) {
+            Customer c = CustomerDao.getCustomerByAccount(b.getAccountNumber());
+            String custName = (c != null) ? c.getFullName() : "Unknown";
+  %>
+  <tr>
+    <td>PEB-ORD-<%= String.format("%03d", b.getId()) %></td>
+    <td>
+      <img src="customerImage?account=<%= b.getAccountNumber() %>" 
+           alt="Customer Image" 
+           style="width:35px; height:35px; border-radius:50%; object-fit:cover;">
+    </td>
+    <td><%= b.getAccountNumber() %></td>
+    <td><%= custName %></td>
+    <td><%= (b.getBillingDate() != null) ? sdf.format(b.getBillingDate()) : "" %></td>
+    <td>Rs. <%= String.format("%.2f", b.getFinalAmount()) %></td>
+    <td>
+      <a href="viewbill.jsp?id=<%= b.getId() %>" class="btn btn-outline btn-sm">
+        <i class="fas fa-eye"></i> View
+      </a>
+    </td>
+  </tr>
+  <%
+        }
+    } else {
+  %>
+  <tr>
+    <td colspan="7" style="text-align:center;">No recent orders found.</td>
+  </tr>
+  <%
+    }
+  %>
+  </tbody>
+</table>
+
+</section>
+
+  </div>
+</div>
+
 </body>
 </html>
-
