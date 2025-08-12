@@ -97,4 +97,3 @@ public class CustomerDaoTest {
         assertNull(deletedCustomer, "Deleted customer should not be found");
     }
 }
-

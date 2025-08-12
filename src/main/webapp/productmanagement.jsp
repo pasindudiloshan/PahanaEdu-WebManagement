@@ -81,16 +81,16 @@
       </div>
       <div class="form-group">
         <label for="category">Filter by Category:</label>
-        <select name="category" id="category" class="form-input">
-          <option value="">All Categories</option>
-          <option value="Novels" <%= "Novels".equals(filterCategory) ? "selected" : "" %>>Novels</option>
-          <option value="Stationery" <%= "Stationery".equals(filterCategory) ? "selected" : "" %>>Stationery</option>
-          <option value="Textbooks" <%= "Textbooks".equals(filterCategory) ? "selected" : "" %>>Textbooks</option>
-          <option value="Magazines" <%= "Magazines".equals(filterCategory) ? "selected" : "" %>>Magazines</option>
-          <option value="Comics" <%= "Comics".equals(filterCategory) ? "selected" : "" %>>Comics</option>
-          <option value="Reference" <%= "Reference".equals(filterCategory) ? "selected" : "" %>>Reference</option>
-          <option value="Others" <%= "Others".equals(filterCategory) ? "selected" : "" %>>Others</option>
-        </select>
+<select name="category" id="category" class="form-input">
+  <option value="">All Categories</option>
+  <option value="Local Book" <%= "Local Book".equals(filterCategory) ? "selected" : "" %>>Local Book</option>
+  <option value="Foreign Book" <%= "Foreign Book".equals(filterCategory) ? "selected" : "" %>>Foreign Book</option>
+  <option value="Stationery" <%= "Stationery".equals(filterCategory) ? "selected" : "" %>>Stationery</option>
+  <option value="School Supply" <%= "School Supply".equals(filterCategory) ? "selected" : "" %>>School Supply</option>
+  <option value="Office Supply" <%= "Office Supply".equals(filterCategory) ? "selected" : "" %>>Office Supply</option>
+  <option value="Accessories" <%= "Accessories".equals(filterCategory) ? "selected" : "" %>>Accessories</option>
+</select>
+
       </div>
       <div style="display: flex; align-items: flex-end; gap: 10px;">
         <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>

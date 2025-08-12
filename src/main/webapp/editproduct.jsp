@@ -30,7 +30,14 @@
     }
 
     // You can hardcode categories here or fetch from DB if you want
-    String[] categories = {"Fiction", "Non-Fiction", "Science", "Biography", "Children", "Other"};
+    String[] categories = {
+    "Local Book",
+    "Foreign Book",
+    "Stationery",
+    "School Supply",
+    "Office Supply",
+    "Accessories"
+};
 %>
 
 <!DOCTYPE html>

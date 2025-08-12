@@ -91,16 +91,15 @@
           <div class="form-row-two">
             <div class="form-group">
               <label for="category">Category <span style="color:red">*</span></label>
-              <select id="category" name="category" class="form-input" required>
-                <option value="" disabled selected>Select category</option>
-                <option value="Novels">Novels</option>
-                <option value="Stationery">Stationery</option>
-                <option value="Textbooks">Textbooks</option>
-                <option value="Magazines">Magazines</option>
-                <option value="Comics">Comics</option>
-                <option value="Reference">Reference</option>
-                <option value="Others">Others</option>
-              </select>
+<select id="category" name="category" class="form-input" required>
+  <option value="" disabled selected>Select category</option>
+  <option value="Local Book">Local Book</option>
+  <option value="Foreign Book">Foreign Book</option>
+  <option value="Stationery">Stationery</option>
+  <option value="School Supply">School Supply</option>
+  <option value="Office Supply">Office Supply</option>
+  <option value="Accessories">Accessories</option>
+</select>
             </div>
             <div class="form-group">
               <label for="photo">Product Image <span style="color:red">*</span></label>

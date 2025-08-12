@@ -61,13 +61,7 @@
                   required
                   autocomplete="current-password"
                 />
-                <i class="zmdi zmdi-eye toggle-password" id="togglePassword"></i>
               </div>
-            </div>
-
-            <div class="form-group remember-me">
-              <input type="checkbox" name="remember" id="remember" />
-              <label for="remember"> Remember Me</label>
             </div>
 
             <div class="form-group">
@@ -98,22 +92,16 @@
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <script type="text/javascript">
-  const status = document.getElementById("status").value;
-  if (status === "failed") {
-    swal("Sorry", "Wrong Username or Password", "error");
-  }
-=
-  $('#togglePassword').on('click', function() {
-    const passwordField = $('#password');
-    const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
-    passwordField.attr('type', type);
-    $(this).toggleClass('zmdi-eye zmdi-eye-off');
-  });
+const status = document.getElementById("status").value;
+if (status === "failed") {
+  swal("Sorry", "Wrong Username or Password", "error");
+}
 </script>
 
 </body>
 
 </html>
+
 
 
 
