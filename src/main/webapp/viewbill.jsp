@@ -1,123 +1,117 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.*, java.sql.*, java.text.*" %>
-<%@ page import="com.pahanaedu.model.*" %>
-<%@ page import="com.pahanaedu.dao.*" %>
-<%@ page import="com.pahanaedu.util.DBUtil" %>
+<%@ page import="com.pahanaedu.model.Bill" %>
+<%@ page import="com.pahanaedu.model.BillItem" %>
+<%@ page import="com.pahanaedu.model.Product" %>
+<%@ page import="com.pahanaedu.dao.ProductDao" %>
+<%@ page import="com.pahanaedu.dao.CustomerDao" %>
+<%@ page import="com.pahanaedu.model.Customer" %>
+<%@ page import="java.util.List" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    String billIdParam = request.getParameter("id");
-    if (billIdParam == null) {
-        response.sendRedirect("billinghistory.jsp");
-        return;
-    }
-
-    int billId = -1;
-    try {
-        billId = Integer.parseInt(billIdParam);
-    } catch (NumberFormatException e) {
-        response.sendRedirect("billinghistory.jsp");
-        return;
-    }
-
-    Bill bill = null;
-    List<BillItem> items = new ArrayList<>();
+    Bill bill = (Bill) request.getAttribute("bill");
     Customer customer = null;
-    Map<String, Product> productMap = new HashMap<>();
-
-    DecimalFormat df = new DecimalFormat("0.00");
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-    try (Connection conn = DBUtil.getConnection()) {
-        BillDao billDao = new BillDao(conn);
-        bill = billDao.getBillById(billId);
-
-        if (bill == null) {
-            response.sendRedirect("billinghistory.jsp");
-            return;
-        }
-
-        items = billDao.getBillItems(billId);
-        customer = CustomerDao.getCustomerByAccount(bill.getAccountNumber()); // ✅ static call
-
-        List<Product> allProducts = ProductDao.getAllProducts(); // ✅ static call
-        for (Product p : allProducts) {
-            productMap.put(p.getItemId(), p); // ✅ assuming getItemId() returns String
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
+    if (bill != null) {
+        customer = CustomerDao.getCustomerByAccount(bill.getAccountNumber());
     }
-%>
+    @SuppressWarnings("unchecked")
+    List<BillItem> billItems = (List<BillItem>) request.getAttribute("billItems");
 
+    double grandTotal = 0.0;
+%>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Bill #<%= billId %> - Invoice</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link rel="stylesheet" href="css/sidebar-header.css">
-  <link rel="stylesheet" href="css/view-bill.css">
-  <link rel="icon" type="image/x-icon" href="images/favicon.png">
+    <title>Invoice - PahanaEdu</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/invoice.css" />
 </head>
 <body>
 
-<div class="container">
-  <%@ include file="sidebar.jsp" %>
-  <%@ include file="header.jsp" %>
-
-  <div class="main-content">
-    <div class="page-title">
-      <div class="title"><i class="fas fa-file-invoice"></i> Bill Details - #<%= billId %></div>
-      <div class="action-buttons">
-        <a href="billinghistory.jsp" class="btn btn-outline">
-          <i class="fas fa-arrow-left"></i> Back to History
-        </a>
-      </div>
+<div class="header">
+    <div class="logo">
+        <img src="images/Colorpahanalogo.png" alt="PahanaEdu Logo" />
+        <small><%= bill != null ? bill.getBillingDate() : "" %></small>
     </div>
-
-    <div class="invoice-card">
-      <div class="section-header">Customer Information</div>
-      <div class="info-grid">
-        <p><strong>Account No:</strong> <%= bill.getAccountNumber() %></p>
-        <p><strong>Customer Name:</strong> <%= (customer != null) ? customer.getFullName() : "Unknown Customer" %></p>
-        <p><strong>Billing Date:</strong> <%= (bill.getBillingDate() != null) ? sdf.format(bill.getBillingDate()) : "" %></p>
-        <p><strong>Payment Method:</strong> <%= bill.getPaymentMethod() %></p>
-        <p><strong>Discount:</strong> <%= df.format(bill.getDiscountPercent()) %> %</p>
-      </div>
-
-      <div class="section-header" style="margin-top:30px;">Billed Items</div>
-      <table class="invoice-table">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Unit Price (Rs.)</th>
-            <th>Total (Rs.)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% for (BillItem item : items) {
-               Product product = productMap.get(item.getProductId());
-               String name = (product != null) ? product.getName() : "Product #" + item.getProductId();
-          %>
-            <tr>
-              <td><%= name %></td>
-              <td><%= item.getQuantity() %></td>
-              <td><%= df.format(item.getUnitPrice()) %></td>
-              <td><%= df.format(item.getUnitPrice() * item.getQuantity()) %></td>
-            </tr>
-          <% } %>
-        </tbody>
-      </table>
-
-      <div class="totals">
-        <p><strong>Total (Before Discount):</strong> Rs. <%= df.format(bill.getTotalAmount()) %></p>
-        <p><strong>Final Amount (After Discount):</strong> Rs. <%= df.format(bill.getFinalAmount()) %></p>
-      </div>
+    <div class="invoice-number">
+        <%= bill != null ? "PEB-ORD-" + String.format("%03d", bill.getId()) : "" %>
     </div>
-  </div>
+</div>
+
+<div class="bill-to">
+    <strong>BILL TO:</strong><br>
+    Name: <%= (customer != null) ? customer.getFullName() : "Unknown Customer" %><br>
+    Account: <%= bill != null ? bill.getAccountNumber() : "" %><br>
+    Payment Method: <%= bill != null ? bill.getPaymentMethod() : "" %>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Product ID</th>
+            <th>Qty</th>
+            <th>Unit Price</th>
+            <th>Discount</th>
+            <th>Final Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        <%
+            if (billItems != null) {
+                for (BillItem item : billItems) {
+                    Product product = ProductDao.getProductById(item.getProductNumericId());
+                    String productName = (product != null) ? product.getName() : "Unknown Product";
+                    double unitPrice = (product != null) ? product.getPrice() : 0.0;
+                    double subtotal = item.getQuantity() * item.getFinalPrice();
+                    grandTotal += subtotal;
+        %>
+        <tr>
+            <td>
+                <img class="product-img" src="productImage?id=<%= item.getProductNumericId() %>"
+                     onerror="this.onerror=null;this.src='images/default-product.png';" />
+            </td>
+            <td><%= productName %></td>
+            <td><%= item.getProductId() %></td>
+            <td><%= item.getQuantity() %></td>
+            <td>Rs. <%= String.format("%.2f", unitPrice) %></td>
+            <td>Rs. <%= String.format("%.2f", item.getDiscountAmount()) %></td>
+            <td>Rs. <%= String.format("%.2f", item.getFinalPrice()) %></td>
+        </tr>
+        <%      }
+            }
+        %>
+    </tbody>
+</table>
+
+<table class="totals">
+    <tr>
+        <td><strong>Grand Total:</strong></td>
+        <td class="grand-total">Rs. <%= String.format("%.2f", grandTotal) %></td>
+    </tr>
+</table>
+
+<div class="payment-info">
+    <strong>PAYMENT INFORMATION:</strong><br>
+    Bank: Example Bank<br>
+    Account: 0000 0000 0000<br><br>
+    Payment is due within 30 days from invoice date.
+</div>
+
+<div class="bottom-buttons">
+    <button class="btn btn-back" onclick="window.location.href='billinghistory.jsp'">
+        <i class="fas fa-arrow-left"></i> Back to Sales
+    </button>
+    <button class="btn btn-print" onclick="window.print()">
+        <i class="fas fa-print"></i> Print Bill
+    </button>
+</div>
+
+<div class="footer">
+    <div>📞 +94 74 0666 500</div>
+    <div>✉ pahanaeducation@gmail.com</div>
+    <div>🌐 www.pahanaedu.com</div>
 </div>
 
 </body>
 </html>
-
