@@ -1,14 +1,17 @@
 package com.pahanaedu.model;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Bill {
     private int id;
     private String accountNumber;
-    private Date billingDate;
+    private Date billingDate;       // use java.util.Date (can store Timestamp)
     private String paymentMethod;
     private double finalAmount;
 
+    public Bill() {}
+
+    // Getters and setters
     public int getId() {
         return id;
     }

@@ -14,7 +14,7 @@ $(document).ready(function () {
         Swal.fire("Warning", "Please provide valid bill details.", "warning");
     }
 
-    // Product Select Change Handler
+    // When product selection changes, update unit price and clear totals
     $('#productSelect').on('change', function () {
         const selected = $('#productSelect option:selected');
         const price = selected.attr('data-price');
@@ -88,10 +88,12 @@ function addProduct() {
         return;
     }
 
+    // Calculate amounts
     const subtotal = unitPrice * quantity;
     const discountAmount = subtotal * (discountPercent / 100);
     const finalTotal = subtotal - discountAmount;
 
+    // Create new row
     const row = document.createElement("tr");
     row.id = "row_" + itemId;
 
@@ -100,14 +102,14 @@ function addProduct() {
         <td>${quantity}<input type="hidden" name="quantity[]" value="${quantity}"></td>
         <td>Rs. ${unitPrice.toFixed(2)}<input type="hidden" name="unitPrice[]" value="${unitPrice.toFixed(2)}"></td>
         <td>Rs. ${subtotal.toFixed(2)}</td>
-        <td>${discountPercent.toFixed(2)}%</td>
+        <td>Rs. ${discountAmount.toFixed(2)}<input type="hidden" name="discountAmount[]" value="${discountAmount.toFixed(2)}"></td>
         <td class="item-total" data-amount="${finalTotal.toFixed(2)}">Rs. ${finalTotal.toFixed(2)}</td>
         <td><button type="button" class="btn btn-outline btn-sm" onclick="removeProductRow('${row.id}')"><i class="fas fa-trash"></i> Remove</button></td>
     `;
 
     document.getElementById("productTableBody").appendChild(row);
 
-    // Reset form fields
+    // Reset fields
     $('#productSelect').val('').trigger('change');
     $('#quantityInput').val(1);
     $('#unitPriceInput').val('');
@@ -152,4 +154,5 @@ function validateBeforeSubmit() {
     document.getElementById("finalAmountInput").value = finalAmount.toFixed(2);
     return true;
 }
+
 
