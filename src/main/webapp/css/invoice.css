@@ -1,0 +1,138 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 30px;
+    background: #ffffff;
+    color: #333;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 4px solid #1f2b5c;
+    padding-bottom: 10px;
+}
+.logo {
+    display: flex;
+    align-items: center;
+}
+.logo img {
+    max-height: 80px; /* Bigger logo */
+    margin-right: 10px;
+}
+.logo-text h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: bold;
+    color: #1f2b5c;
+}
+.invoice-number {
+    font-weight: bold;
+    font-size: 18px;
+    color: #1f2b5c;
+}
+
+/* Bill to section */
+.bill-to {
+    margin-top: 20px;
+    font-size: 14px;
+}
+.bill-to strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #1f2b5c;
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+thead th {
+    background: #1f2b5c;
+    color: white;
+    padding: 10px;
+    text-align: left;
+    font-size: 14px;
+}
+tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+}
+tbody tr:nth-child(even) {
+    background: #f7f9fc;
+}
+
+/* Product image as book rectangle */
+img.product-img {
+    width: 70px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+/* Totals */
+.totals {
+    margin-top: 20px;
+    width: 300px;
+    float: right;
+    font-size: 14px;
+}
+.totals td {
+    padding: 5px;
+}
+.grand-total {
+    background: #1f2b5c;
+    color: white;
+    font-weight: bold;
+    font-size: 18px; /* Bigger font */
+}
+
+/* Payment info */
+.payment-info {
+    clear: both;
+    margin-top: 40px;
+    font-size: 14px;
+}
+.payment-info strong {
+    color: #1f2b5c;
+}
+
+/* Footer */
+.footer {
+    background: #1f2b5c;
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    margin-top: 30px;
+    font-size: 13px;
+}
+
+/* Buttons */
+.bottom-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+}
+.btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    color: white;
+}
+.btn-back {
+    background: #1f2b5c;
+}
+.btn-print {
+    background: #007bff;
+}
+.btn:hover {
+    opacity: 0.85;
+}

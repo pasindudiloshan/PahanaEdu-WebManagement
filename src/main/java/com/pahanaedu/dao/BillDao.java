@@ -5,11 +5,7 @@ import com.pahanaedu.model.BillItem;
 import com.pahanaedu.util.DBUtil;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 public class BillDao {
     private Connection conn;
@@ -23,7 +19,7 @@ public class BillDao {
         String sql = "INSERT INTO bills (account_number, billing_date, payment_method, final_amount) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, bill.getAccountNumber());
-            ps.setDate(2, new java.sql.Date(bill.getBillingDate().getTime()));
+            ps.setTimestamp(2, new java.sql.Timestamp(bill.getBillingDate().getTime())); // keep date + time
             ps.setString(3, bill.getPaymentMethod());
             ps.setDouble(4, bill.getFinalAmount());
             ps.executeUpdate();
@@ -38,25 +34,29 @@ public class BillDao {
 
     // Insert single BillItem
     public void insertBillItem(BillItem item) throws SQLException {
-        String sql = "INSERT INTO bill_items (bill_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO bill_items (bill_id, product_id, quantity, unit_price, discount_amount, final_price) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, item.getBillId());
             ps.setString(2, item.getProductId());
             ps.setInt(3, item.getQuantity());
             ps.setDouble(4, item.getUnitPrice());
+            ps.setDouble(5, item.getDiscountAmount());
+            ps.setDouble(6, item.getFinalPrice());
             ps.executeUpdate();
         }
     }
 
     // Batch insert BillItems for efficiency
     public void insertBillItems(List<BillItem> items) throws SQLException {
-        String sql = "INSERT INTO bill_items (bill_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO bill_items (bill_id, product_id, quantity, unit_price, discount_amount, final_price) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             for (BillItem item : items) {
                 ps.setInt(1, item.getBillId());
                 ps.setString(2, item.getProductId());
                 ps.setInt(3, item.getQuantity());
                 ps.setDouble(4, item.getUnitPrice());
+                ps.setDouble(5, item.getDiscountAmount());
+                ps.setDouble(6, item.getFinalPrice());
                 ps.addBatch();
             }
             ps.executeBatch();
@@ -73,7 +73,7 @@ public class BillDao {
                     Bill b = new Bill();
                     b.setId(rs.getInt("id"));
                     b.setAccountNumber(rs.getString("account_number"));
-                    b.setBillingDate(rs.getDate("billing_date"));
+                    b.setBillingDate(rs.getTimestamp("billing_date"));
                     b.setPaymentMethod(rs.getString("payment_method"));
                     b.setFinalAmount(rs.getDouble("final_amount"));
                     return b;
@@ -86,10 +86,14 @@ public class BillDao {
     // Get BillItems by bill ID
     public List<BillItem> getBillItems(int billId) throws SQLException {
         List<BillItem> items = new ArrayList<>();
-        String sql = "SELECT * FROM bill_items WHERE bill_id = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, billId);
-            try (ResultSet rs = ps.executeQuery()) {
+        String sql = "SELECT bi.id, bi.bill_id, bi.product_id, bi.quantity, bi.unit_price, bi.discount_amount, bi.final_price, p.id AS product_numeric_id " +
+                     "FROM bill_items bi " +
+                     "JOIN products p ON bi.product_id = p.item_id " +
+                     "WHERE bi.bill_id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, billId);
+            try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     BillItem item = new BillItem();
                     item.setId(rs.getInt("id"));
@@ -97,12 +101,19 @@ public class BillDao {
                     item.setProductId(rs.getString("product_id"));
                     item.setQuantity(rs.getInt("quantity"));
                     item.setUnitPrice(rs.getDouble("unit_price"));
+                    item.setDiscountAmount(rs.getDouble("discount_amount"));
+                    item.setFinalPrice(rs.getDouble("final_price"));
+                    item.setProductNumericId(rs.getInt("product_numeric_id")); // Set numeric ID here
+
                     items.add(item);
                 }
             }
         }
+
         return items;
     }
+
+
 
     // Get all Bills ordered by billing_date DESC
     public List<Bill> getAllBills() throws SQLException {
@@ -114,7 +125,7 @@ public class BillDao {
                 Bill b = new Bill();
                 b.setId(rs.getInt("id"));
                 b.setAccountNumber(rs.getString("account_number"));
-                b.setBillingDate(rs.getDate("billing_date"));
+                b.setBillingDate(rs.getTimestamp("billing_date"));
                 b.setPaymentMethod(rs.getString("payment_method"));
                 b.setFinalAmount(rs.getDouble("final_amount"));
                 bills.add(b);
@@ -122,7 +133,8 @@ public class BillDao {
         }
         return bills;
     }
- // Get Bills filtered by account number and/or date
+
+    // Get Bills filtered by account number and/or date
     public List<Bill> getFilteredBills(String accountNumber, java.util.Date billingDate) throws SQLException {
         List<Bill> bills = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM bills WHERE 1=1");
@@ -135,8 +147,8 @@ public class BillDao {
 
         if (billingDate != null) {
             // Filter for specific date only (midnight to midnight)
-            java.sql.Date start = new java.sql.Date(billingDate.getTime());
-            java.sql.Date end = new java.sql.Date(billingDate.getTime() + (1000 * 60 * 60 * 24));
+            Timestamp start = new Timestamp(billingDate.getTime());
+            Timestamp end = new Timestamp(billingDate.getTime() + (1000L * 60 * 60 * 24));
             sql.append(" AND billing_date >= ? AND billing_date < ?");
             parameters.add(start);
             parameters.add(end);
@@ -154,7 +166,7 @@ public class BillDao {
                     Bill b = new Bill();
                     b.setId(rs.getInt("id"));
                     b.setAccountNumber(rs.getString("account_number"));
-                    b.setBillingDate(rs.getDate("billing_date"));
+                    b.setBillingDate(rs.getTimestamp("billing_date"));
                     b.setPaymentMethod(rs.getString("payment_method"));
                     b.setFinalAmount(rs.getDouble("final_amount"));
                     bills.add(b);
@@ -165,7 +177,7 @@ public class BillDao {
         return bills;
     }
 
-    // Get total quantity for a bill
+    // Get total quantity for a list of bills
     public Map<Integer, Integer> getTotalQuantitiesForBills(List<Bill> bills) throws SQLException {
         Map<Integer, Integer> result = new HashMap<>();
         if (bills == null || bills.isEmpty()) return result;
@@ -190,8 +202,8 @@ public class BillDao {
         }
         return result;
     }
-    
- // Reduce stock quantity after billing
+
+    // Reduce stock quantity after billing
     public void reduceProductStock(String productId, int quantityUsed) throws SQLException {
         String sql = "UPDATE products SET quantity = quantity - ? WHERE item_id = ? AND quantity >= ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -205,6 +217,7 @@ public class BillDao {
         }
     }
 
+    // Get total sales (sum of bill final_amount)
     public double getTotalSales() throws SQLException {
         String sql = "SELECT SUM(final_amount) AS totalSales FROM bills";
         try (PreparedStatement ps = conn.prepareStatement(sql);
@@ -215,7 +228,8 @@ public class BillDao {
         }
         return 0.0;
     }
-    
+
+    // Get total order count
     public int getTotalOrderCount() {
         int count = 0;
         String sql = "SELECT COUNT(*) FROM bills";
@@ -231,6 +245,7 @@ public class BillDao {
         return count;
     }
 
+    // Get recent bills with limit
     public List<Bill> getRecentBills(int limit) {
         List<Bill> recentBills = new ArrayList<>();
         String sql = "SELECT * FROM bills ORDER BY billing_date DESC LIMIT ?";
@@ -242,10 +257,9 @@ public class BillDao {
                     Bill bill = new Bill();
                     bill.setId(rs.getInt("id"));
                     bill.setAccountNumber(rs.getString("account_number"));
-                    bill.setBillingDate(rs.getDate("billing_date"));
+                    bill.setBillingDate(rs.getTimestamp("billing_date"));
                     bill.setFinalAmount(rs.getDouble("final_amount"));
                     bill.setPaymentMethod(rs.getString("payment_method"));
-                    // Set other fields if needed
                     recentBills.add(bill);
                 }
             }
@@ -254,8 +268,6 @@ public class BillDao {
         }
         return recentBills;
     }
-
-
-
 }
+
 

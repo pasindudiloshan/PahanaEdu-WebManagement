@@ -157,9 +157,9 @@
         <td><%= totalQty %></td>
         <td>Rs. <%= String.format("%.2f", b.getFinalAmount()) %></td>
         <td>
-            <a href="viewbill.jsp?id=<%= b.getId() %>" class="btn btn-sm btn-outline">
-                <i class="fas fa-eye"></i> View
-            </a>
+<a href="ViewBillServlet?id=<%= b.getId() %>" class="btn btn-sm btn-outline">
+    <i class="fas fa-eye"></i> View
+</a>
         </td>
     </tr>
 <%
@@ -220,6 +220,7 @@
 
 </body>
 </html>
+
 
 
 

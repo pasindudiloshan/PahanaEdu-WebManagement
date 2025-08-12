@@ -30,37 +30,44 @@ public class AddBillServlet extends HttpServlet {
             String[] productIds = request.getParameterValues("productId[]");
             String[] quantities = request.getParameterValues("quantity[]");
             String[] unitPrices = request.getParameterValues("unitPrice[]");
+            String[] discountAmounts = request.getParameterValues("discountAmount[]");
 
             String finalAmountStr = request.getParameter("finalAmount");
             double finalAmount = parseDoubleSafe(finalAmountStr, 0.0);
 
-            // === Basic Validation ===
+            // Basic validation
             if (accountNumber == null || paymentMethod == null ||
                 productIds == null || quantities == null || unitPrices == null ||
-                finalAmount <= 0.0) {
+                discountAmounts == null || finalAmount <= 0.0) {
                 response.sendRedirect("createbill.jsp?status=invalid");
                 return;
             }
 
-            // === Deduplication of Bill Items ===
-            Map<String, BillItem> uniqueItemsMap = new HashMap<>();
+            // Deduplicate and aggregate BillItems if needed
+            Map<String, BillItem> uniqueItemsMap = new LinkedHashMap<>();
 
             for (int i = 0; i < productIds.length; i++) {
                 String productId = safe(productIds[i]);
                 if (productId.isEmpty()) continue;
 
                 int qty = parseIntSafe(quantities[i], 0);
-                double price = parseDoubleSafe(unitPrices[i], 0.0);
-                if (qty <= 0 || price < 0.0) continue;
+                double unitPrice = parseDoubleSafe(unitPrices[i], 0.0);
+                double discountAmount = parseDoubleSafe(discountAmounts[i], 0.0);
+
+                if (qty <= 0 || unitPrice < 0.0) continue;
 
                 if (uniqueItemsMap.containsKey(productId)) {
                     BillItem existingItem = uniqueItemsMap.get(productId);
                     existingItem.setQuantity(existingItem.getQuantity() + qty);
+                    existingItem.setDiscountAmount(existingItem.getDiscountAmount() + discountAmount);
+                    existingItem.setFinalPrice(existingItem.getFinalPrice() + (unitPrice * qty - discountAmount));
                 } else {
                     BillItem item = new BillItem();
                     item.setProductId(productId);
                     item.setQuantity(qty);
-                    item.setUnitPrice(price);
+                    item.setUnitPrice(unitPrice);
+                    item.setDiscountAmount(discountAmount);
+                    item.setFinalPrice(unitPrice * qty - discountAmount);
                     uniqueItemsMap.put(productId, item);
                 }
             }
@@ -72,51 +79,48 @@ public class AddBillServlet extends HttpServlet {
                 return;
             }
 
-            // === Begin DB Transaction ===
-            Bill bill = new Bill();
-            bill.setAccountNumber(accountNumber);
-            bill.setPaymentMethod(paymentMethod);
-            bill.setFinalAmount(finalAmount);
-            bill.setBillingDate(new java.sql.Date(System.currentTimeMillis()));
-
+            // DB transaction for inserting Bill and BillItems
             conn = DBUtil.getConnection();
             conn.setAutoCommit(false);
 
             BillDao dao = new BillDao(conn);
+
+            Bill bill = new Bill();
+            bill.setAccountNumber(accountNumber);
+            bill.setPaymentMethod(paymentMethod);
+            bill.setFinalAmount(finalAmount);
+            bill.setBillingDate(new java.util.Date()); // current timestamp
+
             int billId = dao.insertBill(bill);
 
-            // Reduce stock for each product
+            // Reduce stock & assign billId
             for (BillItem item : billItems) {
                 dao.reduceProductStock(item.getProductId(), item.getQuantity());
                 item.setBillId(billId);
             }
 
-            // Insert Bill Items
+            // Insert bill items
             dao.insertBillItems(billItems);
 
-            conn.commit(); // Success — commit transaction
+            conn.commit();
 
-            // Redirect to Create Bill Page with success status
+            // Redirect with success
             response.sendRedirect("createbill.jsp?status=success");
 
         } catch (Exception e) {
             e.printStackTrace();
-
             if (conn != null) {
                 try {
-                    conn.rollback(); // Rollback transaction on failure
+                    conn.rollback();
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
             }
-
-            // Redirect to Create Bill Page with failure status
             response.sendRedirect("createbill.jsp?status=failed");
-
         } finally {
             if (conn != null) {
                 try {
-                    conn.setAutoCommit(true); // Reset autocommit to default
+                    conn.setAutoCommit(true);
                     conn.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -125,7 +129,7 @@ public class AddBillServlet extends HttpServlet {
         }
     }
 
-    // === Utility Methods ===
+    // Utility helpers
     private String safe(String input) {
         return input == null ? "" : input.trim();
     }

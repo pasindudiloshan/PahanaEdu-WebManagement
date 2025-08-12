@@ -6,6 +6,13 @@ public class BillItem {
     private String productId;  
     private int quantity;
     private double unitPrice;
+    private double discountAmount; 
+    private double finalPrice;
+
+    // New field to hold numeric product ID (from products.id)
+    private int productNumericId;
+
+    public BillItem() {}
 
     public int getId() {
         return id;
@@ -40,6 +47,27 @@ public class BillItem {
     }
     public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public double getFinalPrice() {
+        return finalPrice;
+    }
+    public void setFinalPrice(double finalPrice) {
+        this.finalPrice = finalPrice;
+    }
+
+    public int getProductNumericId() {
+        return productNumericId;
+    }
+    public void setProductNumericId(int productNumericId) {
+        this.productNumericId = productNumericId;
     }
 }
 
