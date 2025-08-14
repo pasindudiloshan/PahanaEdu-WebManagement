@@ -38,13 +38,10 @@
       <i class="fas fa-users-cog"></i>
       <span>Users</span>
     </a>
-    <div class="nav-item <%= currentPage.endsWith("faq.jsp") ? "active" : "" %>">
+    <div class="menu-heading">Admin</div>
+    <a href="helprole.jsp" class="nav-item <%= currentPage.endsWith("helprole.jsp") ? "active" : "" %>">
       <i class="fas fa-question-circle"></i>
-      <span>FAQ</span>
-    </div>
-    <div class="nav-item <%= currentPage.endsWith("settings.jsp") ? "active" : "" %>">
-      <i class="fas fa-cogs"></i>
-      <span>Settings</span>
-    </div>
+      <span>Help</span>
+    </a>
   </div>
 </div>
