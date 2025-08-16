@@ -1,4 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+    // Read reset message from session (set by NewPassword servlet)
+    String resetStatus = "";
+    String resetMessage = "";
+
+    if(session.getAttribute("resetStatus") != null) {
+        resetStatus = (String) session.getAttribute("resetStatus");
+        resetMessage = (String) session.getAttribute("resetMessage");
+        session.removeAttribute("resetStatus");
+        session.removeAttribute("resetMessage");
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,9 +30,11 @@
 </head>
 <body>
 
-<!-- Hidden status flag set by servlet -->
+<!-- Hidden status flags set by servlet or session -->
 <input type="hidden" id="status" 
        value="<%= request.getAttribute("status") != null ? request.getAttribute("status").toString() : "" %>" />
+<input type="hidden" id="resetStatus" value="<%= resetStatus %>" />
+<input type="hidden" id="resetMessage" value="<%= resetMessage %>" />
 
 <div class="main">
   <!-- Sign in Form -->
@@ -95,15 +109,26 @@
 
 <script type="text/javascript">
 const status = document.getElementById("status").value;
+const resetStatus = document.getElementById("resetStatus").value;
+const resetMessage = document.getElementById("resetMessage").value;
 
+// Login attempt failure
 if (status === "failed") {
   swal("Sorry", "Wrong Username or Password", "error");
 } else if (status === "locked") {
   swal("Blocked", "You have exceeded 3 login attempts. Please try again later.", "error");
 }
+
+// Password reset success
+if (resetStatus === "success" && resetMessage !== "") {
+  swal("Success!", resetMessage, "success");
+}
+
+// Password reset error (if any)
+if (resetStatus === "error" && resetMessage !== "") {
+  swal("Error", resetMessage, "error");
+}
 </script>
 
 </body>
 </html>
-
-
