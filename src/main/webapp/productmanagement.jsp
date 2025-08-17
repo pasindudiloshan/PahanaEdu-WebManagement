@@ -111,7 +111,7 @@
             <th>Name</th>
             <th>Description</th>
             <th>Category</th>
-            <th>Price (LKR)</th>
+            <th>Price (Rs.)</th>
             <th>Quantity</th>
             <% if (isAdminOrManager) { %>
               <th>Actions</th>

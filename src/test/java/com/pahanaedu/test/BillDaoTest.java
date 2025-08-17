@@ -40,7 +40,7 @@ public class BillDaoTest {
     @Order(1)
     public void testInsertBillAndBillItems() throws SQLException {
         Bill bill = new Bill();
-        bill.setAccountNumber("PEB-ACC-020");  // existing customer
+        bill.setAccountNumber("PEB-ACC-020");  // real customer
         bill.setBillingDate(new Date());
         bill.setPaymentMethod("Credit Card");
         bill.setFinalAmount(700.00);
