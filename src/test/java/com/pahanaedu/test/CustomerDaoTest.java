@@ -10,13 +10,14 @@ import org.junit.jupiter.api.*;
 import java.sql.Date;
 import java.util.List;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CustomerDaoTest {
 
     private static final String TEST_ACCOUNT = "PEB-ACC-099";
     private static final String TEMP_ACCOUNT = "PEB-ACC-081";
 
     @BeforeAll
-    public static void setup() {
+    public void setup() {
         Customer customer = new Customer();
         customer.setAccountNumber(TEST_ACCOUNT);
         customer.setFullName("JUnit Test Customer");
@@ -33,18 +34,35 @@ public class CustomerDaoTest {
     }
 
     @AfterAll
-    public static void cleanup() {
+    public void cleanup() {
         CustomerDao.deleteCustomer(TEST_ACCOUNT);
-        CustomerDao.deleteCustomer(TEMP_ACCOUNT); // clean if temp used
+        CustomerDao.deleteCustomer(TEMP_ACCOUNT);
     }
 
+    // 1️⃣ Add Customer Test
     @Test
-    public void testGetCustomerByAccount() {
-        Customer customer = CustomerDao.getCustomerByAccount(TEST_ACCOUNT);
-        assertNotNull(customer, "Customer should be found");
-        assertEquals("JUnit Test Customer", customer.getFullName());
+    public void testAddCustomer() {
+        Customer temp = new Customer();
+        temp.setAccountNumber(TEMP_ACCOUNT);
+        temp.setFullName("Temp Customer");
+        temp.setPhone("0000000000");
+        temp.setEmail("temp@example.com");
+        temp.setAddress("Temp Addr");
+        temp.setCity("TempCity");
+        temp.setPostalCode("00000");
+        temp.setImage(new byte[]{4, 5, 6});
+        temp.setRegistrationDate(new Date(System.currentTimeMillis()));
+
+        boolean added = CustomerDao.addCustomer(temp);
+        assertTrue(added, "Temp customer should be added");
+
+        // Verify added
+        Customer retrieved = CustomerDao.getCustomerByAccount(TEMP_ACCOUNT);
+        assertNotNull(retrieved, "Customer should exist after add");
+        assertEquals("Temp Customer", retrieved.getFullName());
     }
 
+    // 2️⃣ Update Customer Test
     @Test
     public void testUpdateCustomer() {
         Customer customer = CustomerDao.getCustomerByAccount(TEST_ACCOUNT);
@@ -61,34 +79,25 @@ public class CustomerDaoTest {
         assertEquals("UpdatedCity", updatedCustomer.getCity());
     }
 
-    @Test
-    public void testGetAllCustomers() {
-        List<Customer> customers = CustomerDao.getAllCustomers();
-        assertNotNull(customers, "Customer list should not be null");
-        assertTrue(customers.size() > 0, "There should be at least one customer");
-    }
-
-    @Test
-    public void testGetCustomerCount() {
-        int count = CustomerDao.getCustomerCount();
-        assertTrue(count >= 0, "Customer count should be non-negative");
-    }
-
+    // 3️⃣ Delete Customer Test
     @Test
     public void testDeleteCustomer() {
+        // Ensure temp account does not already exist
+        CustomerDao.deleteCustomer(TEMP_ACCOUNT);
+
         Customer temp = new Customer();
         temp.setAccountNumber(TEMP_ACCOUNT);
-        temp.setFullName("Temp Customer");
+        temp.setFullName("Temp Customer Delete");
         temp.setPhone("0000000000");
-        temp.setEmail("temp@example.com");
+        temp.setEmail("temp" + System.currentTimeMillis() + "@example.com"); // unique
         temp.setAddress("Temp Addr");
         temp.setCity("TempCity");
         temp.setPostalCode("00000");
-        temp.setImage(new byte[]{4, 5, 6});
+        temp.setImage(new byte[]{7, 8, 9});
         temp.setRegistrationDate(new Date(System.currentTimeMillis()));
 
         boolean added = CustomerDao.addCustomer(temp);
-        assertTrue(added, "Temp customer should be added");
+        assertTrue(added, "Temp customer should be added for deletion");
 
         boolean deleted = CustomerDao.deleteCustomer(TEMP_ACCOUNT);
         assertTrue(deleted, "Temp customer should be deleted");
@@ -96,4 +105,28 @@ public class CustomerDaoTest {
         Customer deletedCustomer = CustomerDao.getCustomerByAccount(TEMP_ACCOUNT);
         assertNull(deletedCustomer, "Deleted customer should not be found");
     }
+
+    // 4️⃣ Get Customer by Account Test
+    @Test
+    public void testGetCustomerByAccount() {
+        Customer customer = CustomerDao.getCustomerByAccount(TEST_ACCOUNT);
+        assertNotNull(customer, "Customer should be found");
+        assertEquals("JUnit Test Customer", customer.getFullName());
+    }
+
+    // 5️⃣ Get All Customers Test
+    @Test
+    public void testGetAllCustomers() {
+        List<Customer> customers = CustomerDao.getAllCustomers();
+        assertNotNull(customers, "Customer list should not be null");
+        assertTrue(customers.size() > 0, "There should be at least one customer");
+    }
+
+    // 6️⃣ Get Customer Count Test
+    @Test
+    public void testGetCustomerCount() {
+        int count = CustomerDao.getCustomerCount();
+        assertTrue(count >= 0, "Customer count should be non-negative");
+    }
 }
+
