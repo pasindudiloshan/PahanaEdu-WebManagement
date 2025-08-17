@@ -228,7 +228,7 @@
   </div>
 </div>
 
-<!-- ✅ SweetAlert Script -->
+
 <script>
 const status = document.getElementById("status").value;
 if (status === "success") {

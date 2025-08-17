@@ -49,8 +49,15 @@ public class LoginServlet extends HttpServlet {
             // Reset attempts on successful login
             session.setAttribute("loginAttempts", 0);
 
+            // ✅ Set user in session
             session.setAttribute("user", user);
+
+            // ✅ Set login success status
             session.setAttribute("status", "success");
+
+            // ✅ Set session timeout (2 minutes for testing)
+            session.setMaxInactiveInterval(2 * 60); 
+
             response.sendRedirect("index.jsp");
         } else {
             // Increase attempts
