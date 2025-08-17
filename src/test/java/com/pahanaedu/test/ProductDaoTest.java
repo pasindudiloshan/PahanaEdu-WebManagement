@@ -90,7 +90,6 @@ public class ProductDaoTest {
 
     @Test
     public void testDeleteProductById() {
-        // Create a temporary product to delete
         Product tempProduct = new Product();
         tempProduct.setItemId("PBE-ITEM-099");
         tempProduct.setName("Temp Product");
@@ -104,14 +103,14 @@ public class ProductDaoTest {
         boolean added = ProductDao.addProduct(tempProduct, imageStream);
         assertTrue(added, "Temporary product should be added");
 
-        // Get inserted product to find ID
+
         List<Product> products = ProductDao.getAllProducts();
         Product lastProduct = products.get(0);
 
         boolean deleted = ProductDao.deleteProductById(lastProduct.getId());
         assertTrue(deleted, "Temporary product should be deleted");
 
-        // Confirm deletion
+
         Product deletedProduct = ProductDao.getProductById(lastProduct.getId());
         assertNull(deletedProduct, "Deleted product should no longer exist");
     }
