@@ -1,0 +1,148 @@
+@charset "UTF-8";
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    .tutorial-buttons {
+        display: flex;
+        gap: 50px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .tutorial-container {
+        text-align: center;
+    }
+
+    /* BIG rounded buttons */
+    .tutorial-button {
+        display: inline-block;
+        text-align: center;
+        background: #fff;
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 350px;
+        width: 100%;
+        min-height: 280px;
+        transition: box-shadow 0.3s ease, transform 0.2s ease;
+        border: 1px solid #ddd;
+        text-decoration: none;
+    }
+
+    .tutorial-button img {
+        width: 100%;
+        height: auto;
+        max-width: 220px;
+        margin-bottom: 15px;
+    }
+
+    .tutorial-button strong {
+        display: block;
+        font-size: 20px;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .tutorial-button:hover {
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        transform: translateY(-3px);
+    }
+
+
+    .role-label {
+        font-size: 32px;
+        font-weight: bold;
+        color: #0d47a1;
+        margin-top: 15px;
+    }
+    
+  /* Slider container */
+/* Slider container */
+.slider-container {
+    position: relative;
+    max-width: 1100px;
+    margin: 40px auto;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #fff; /* White background */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.slider {
+    position: relative;
+    width: 100%;
+    height: 550px; /* Bigger slider */
+}
+
+.slide {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Keep original proportions */
+    background: #fff; /* White background behind images */
+}
+
+.slide.active {
+    display: block;
+}
+
+/* Arrows */
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    padding: 14px;
+    color: #fff; /* Arrow symbol color */
+    font-weight: bold;
+    font-size: 36px;
+    transition: background-color 0.3s ease;
+    border-radius: 50%;
+    user-select: none;
+    background: rgba(33, 150, 243, 0.9); /* Blue arrows */
+    transform: translateY(-50%); /* Prevent shaking */
+    z-index: 10;
+}
+
+.prev:hover, .next:hover {
+    background: rgba(25, 118, 210, 1); /* Darker blue on hover */
+}
+
+.prev {
+    left: 15px;
+}
+
+.next {
+    right: 15px;
+}
+
+/* Dots */
+.dots-container {
+    text-align: center;
+    padding: 12px 0;
+    background: #fff; /* White under dots */
+}
+
+.dot {
+    cursor: pointer;
+    height: 14px;
+    width: 14px;
+    margin: 0 6px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.dot.active, .dot:hover {
+    background-color: #2196f3; /* Blue active dots */
+    transform: scale(1.2);
+}
