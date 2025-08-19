@@ -32,28 +32,14 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- 1. JavaMail API (for sending emails) -->
-    <dependency>
-      <groupId>com.sun.mail</groupId>
-      <artifactId>javax.mail</artifactId>
-      <version>1.6.0</version>
-    </dependency>
-
-    <!-- 2. jBCrypt (for secure password hashing) -->
-    <dependency>
-      <groupId>org.mindrot</groupId>
-      <artifactId>jbcrypt</artifactId>
-      <version>0.4</version>
-    </dependency>
-
-    <!-- 3. MySQL JDBC Driver -->
+    <!-- 1. MySQL JDBC Driver -->
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>8.0.33</version>
     </dependency>
 
-    <!-- 4. JUnit 5 (for testing, test scope only) -->
+    <!-- 2. JUnit 5 (for testing, test scope only) -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -61,13 +47,27 @@
       <scope>test</scope>
     </dependency>
     
-    <!-- 5. Jackson for JSON serialization -->
+    <!-- 3. Jackson for JSON serialization -->
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-databind</artifactId>
     <version>2.15.2</version>
 </dependency>
-    
+
+    <!-- 4. JavaMail API (for sending emails) -->
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
+      <version>1.6.0</version>
+    </dependency>
+
+    <!-- 5. jBCrypt (for secure password hashing) -->
+    <dependency>
+      <groupId>org.mindrot</groupId>
+      <artifactId>jbcrypt</artifactId>
+      <version>0.4</version>
+    </dependency>
+
   </dependencies>
 
   <build>
