@@ -3,11 +3,13 @@
 Pahana Edu is a leading bookshop in Colombo City, serving hundreds of customers each month. Currently, customer account details are maintained manually, and the company requires a computerized online (web-based) system to manage billing information efficiently.  
 For this purpose, I created a **Java EE-based web application** designed to manage books, customers, users, and billing processes in a bookshop environment.
 
+![image alt](https://github.com/pasindudiloshan/PahanaEdu-WebManagement/blob/7c04cf67fc2796864a850ca98e1263ce7a02d849/Readme%20Background%20image.jpg)
+
 ## 🚀 Features
 
 - 👥 **User Management Module** – Full CRUD for users with role-based access control.  
 - 🛍️ **Product Management Module** – CRUD for books with category tagging and image handling.  
-- 👨‍💼 **Customer Management Module** – CRUD for customer profiles with unique account numbers and profile images.  
+- 👨‍💼 **Customer Management Module** – CRUD for customer profiles with unique account numbers. 
 - 🔐 **Authentication & Security Module** – Hashed login credentials with OTP-based password recovery.  
 - 🧾 **Billing Engine** – Invoice generation with dynamic discounts based on payment rules.  
 - 📊 **Sales Analytics & History Module** – Filter and query billing records by relevant parameters.  
