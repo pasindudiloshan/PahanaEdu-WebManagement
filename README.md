@@ -1,50 +1,65 @@
 # 📚 PahanaEdu-WebManagement
 
-A Java-based web application for managing books, customers, users, and billing processes in a bookshop environment.
+Pahana Edu is a leading bookshop in Colombo City, serving hundreds of customers each month. Currently, customer account details are maintained manually, and the company requires a computerized online (web-based) system to manage billing information efficiently.  
+For this purpose, I created a **Java EE-based web application** designed to manage books, customers, users, and billing processes in a bookshop environment.
 
 ## 🚀 Features
 
-- 👥 User Management – Full CRUD operations (Create, Read, Update, Delete)
-- 🛍️ Product (Book) Management – CRUD operations with category and image upload
-- 👨‍💼 Customer Management – CRUD operations with profile picture and detailed address
-- 🧾 Bill Creation – Includes dynamic discount logic based on payment method
-- 📊 Billing History – Filter bills by account number and date
-- Each bill can be viewed and downloaded as a PDF receipt
-- 🔐 Secure Login System – Passwords stored using hashing, with OTP-based - password recovery
-- 📷 Image Upload & Display – For Users, Customers, and Products
-- 📦 Dashboard Overview – Statistics cards showing:
-		-🪙 Total Revenue
-		-📦 Total Orders
-		-👥 Total Customers
-		-📚 Total Products
-		-👨‍💻 Total Users
-		-🕒 Latest 5 Orders Displayed	
+- 👥 **User Management Module** – Full CRUD for users with role-based access control.  
+- 🛍️ **Product Management Module** – CRUD for books with category tagging and image handling.  
+- 👨‍💼 **Customer Management Module** – CRUD for customer profiles with unique account numbers and profile images.  
+- 🔐 **Authentication & Security Module** – Hashed login credentials with OTP-based password recovery.  
+- 🧾 **Billing Engine** – Invoice generation with dynamic discounts based on payment rules.  
+- 📊 **Sales Analytics & History Module** – Filter and query billing records by relevant parameters.  
+- 🖨️ **PDF Invoice Generation Module** – Produces downloadable, formatted receipts for each transaction.  
+- 📷 **Media Management Layer** – Handles image uploads and retrieval for users, customers, and products.  
+- 📦 **Reporting Module** – Aggregates metrics and visual summaries, including total revenue, total customers etc..
+
+## 🎬 Demonstration Video
+
+A demonstration of the **PahanaEdu Billing System** in action can be viewed here:  
+[Watch Demo Video](https://drive.google.com/file/d/1QW5H1EuLhr8QPEoRR1J825ZYBjIi51l/view?usp=sharing)
+
+## 📄 Project Report
+
+The full system report detailing the design, architecture, and implementation of **PahanaEdu Billing System** can be accessed here:  
+[View System Report](https://docs.google.com/document/d/1FRPoZSXxv0QVIIY3TO98PKzVT5XMOInB/edit?usp=sharing&ouid=108374880673706677958&rtpof=true&sd=true)
 
 ## 🛠️ Technologies Used
 
-- Java (Servlets, JSP)
-- MySQL
-- HTML, CSS, JavaScript (jQuery, Select2)
-- Apache Tomcat
+- Frontend: HTML, CSS, JavaScript, jQuery, SweetAlert
+- Backend: Java Servlets, JSP, JDBC, DAO Pattern, MVC
+- Database: MySQL
+- Testing: JUnit 5
+- Security: jBCrypt, JavaMail
+- Server: Apache Tomcat 9
 - Maven
 - Git + GitHub for version control
 
-
 ## 📁 Folder Structure
-PahanaEdu-WebManagement/
-├── src/
-│ └── main/
-│ └── java/com/pahanaedu/
-│ ├── controller/
-│ ├── dao/
-│ ├── model/
-│ └── util/
-├── src/main/webapp/
-│ ├── css/
-│ ├── js/
-│ ├── *.jsp
-├── pom.xml
-└── README.md
+
+PahanaEdu-WebManagement/            
+├── src/            
+│   ├── main/            
+│   │   ├── java/com/pahanaedu/            
+│   │   │   ├── controller/   
+│   │   │   ├── dao/            
+│   │   │   ├── model/          
+│   │   │   └── util/           
+│   │   └── webapp/
+│   │       ├── css/            
+│   │       ├── js/             
+│   │       ├── fonts/          
+│   │       ├── META-INF/       
+│   │       ├── WEB-INF/        
+│   │       └── *.jsp           
+│   │
+│   └── test/java/com/pahanaedu/test/   
+│
+├── target/                     
+├── pom.xml                    
+├── README.md                   
+
 
 ## 💻 Setup Instructions
 
@@ -58,7 +73,7 @@ PahanaEdu-WebManagement/
 
  4. Update DB credentials in DBUtil.java.
 
- 5. Run the application on http://localhost:8080/PahanaEdu-WebManagement
+ 5. Run the application on http://localhost:8090/PahanaEdu-WebManagement
 
 🙋‍♂️ Author - PPD Fernando
 pasindudiloshan — GitHub
